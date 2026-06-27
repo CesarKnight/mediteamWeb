@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { dashboard } from '@/routes';
+import Table from '@/components/ui/table/Table.vue';
 
 defineOptions({
     layout: {
@@ -25,6 +26,7 @@ defineOptions({
             <div
                 class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
             >
+                <Table>hola</Table>
                 <PlaceholderPattern />
             </div>
             <div

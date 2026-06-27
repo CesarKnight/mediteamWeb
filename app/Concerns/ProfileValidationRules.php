@@ -2,8 +2,8 @@
 
 namespace App\Concerns;
 
+use App\Enums\UsuarioTipo;
 use App\Models\User;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
 trait ProfileValidationRules
@@ -17,8 +17,23 @@ trait ProfileValidationRules
     {
         return [
             'name' => $this->nameRules(),
+            'lastName' => $this->nameRules(),
+            'ci' => $this->ciRules(),
+            'fechaNacimiento' => ['required', 'date'],
+            'telefono' => ['string', 'max:8'],
+            'tipo' => ['required', Rule::enum(UsuarioTipo::class)],
             'email' => $this->emailRules($userId),
         ];
+    }
+
+    /**
+     * Get the validation rules used to validate carnets de indentidad.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function ciRules(): array
+    {
+        return ['required', 'string', 'max:10'];
     }
 
     /**
