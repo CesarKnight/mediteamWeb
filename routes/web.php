@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PacienteController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -15,6 +16,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('{user}/edit',    [UserController::class, 'edit'])->name('edit');
         Route::put('{user}',         [UserController::class, 'update'])->name('update');
         Route::delete('{user}/destroy', [UserController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('pacientes')->name('Pacientes')->group(function (){
+        Route::get('index', [PacienteController::class, 'index'])->name('index');
+        // Route::get('create', [PacienteController::class, 'create'])->name('create');
+        // Route::post('store', [PacienteController::class, 'store'])->name('store');
+        Route::get('{user}/edit',    [PacienteController::class, 'edit'])->name('edit');
+        Route::put('{user}',         [PacienteController::class, 'update'])->name('update');
+        Route::delete('{user}/destroy', [PacienteController::class, 'destroy'])->name('destroy');
     });
 });
 

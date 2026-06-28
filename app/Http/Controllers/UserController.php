@@ -11,6 +11,9 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Validator;
 use App\Concerns\ProfileValidationRules;
+use App\Enums\PacienteEstado;
+use App\Enums\UsuarioTipo;
+use App\Models\Paciente;
 use Illuminate\Support\Facades\Password;
 
 class UserController extends Controller
@@ -33,9 +36,18 @@ class UserController extends Controller
 
     public function store(Request $request, CreateNewUser $creator): RedirectResponse
     {
-        $creator->create($request->all());
+        $usuario = $creator->create($request->all());
+
+        if (UsuarioTipo::tryFrom($request->input('tipo')) === UsuarioTipo::Paciente) {
+            print('llego');
+            $paciente = $usuario->paciente();
+            $paciente->create([
+                'estado' => PacienteEstado::Baja,
+            ]);
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Usuario creado Exitosamente.')]);
+
         return to_route('Usuariosindex');
     }
 
