@@ -18,13 +18,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('{user}/destroy', [UserController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('pacientes')->name('Pacientes')->group(function (){
-        Route::get('index', [PacienteController::class, 'index'])->name('index');
-        // Route::get('create', [PacienteController::class, 'create'])->name('create');
-        // Route::post('store', [PacienteController::class, 'store'])->name('store');
-        Route::get('{user}/edit',    [PacienteController::class, 'edit'])->name('edit');
-        Route::put('{user}',         [PacienteController::class, 'update'])->name('update');
-        Route::delete('{user}/destroy', [PacienteController::class, 'destroy'])->name('destroy');
+    Route::prefix('pacientes')->name('Pacientes')->group(function () {
+        Route::get('index',                      [PacienteController::class, 'index'])->name('index');
+        Route::get('{paciente}/show',            [PacienteController::class, 'show'])->name('show');
+        Route::get('{paciente}/edit',            [PacienteController::class, 'edit'])->name('edit');
+        Route::put('{paciente}',                 [PacienteController::class, 'update'])->name('update');
+        Route::patch('{paciente}/estado',        [PacienteController::class, 'updateEstado'])->name('updateEstado');
+        Route::delete('{paciente}/destroy',      [PacienteController::class, 'destroy'])->name('destroy');
     });
 });
 

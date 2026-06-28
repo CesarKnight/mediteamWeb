@@ -39,7 +39,6 @@ class UserController extends Controller
         $usuario = $creator->create($request->all());
 
         if (UsuarioTipo::tryFrom($request->input('tipo')) === UsuarioTipo::Paciente) {
-            print('llego');
             $paciente = $usuario->paciente();
             $paciente->create([
                 'estado' => PacienteEstado::Baja,
@@ -78,7 +77,7 @@ class UserController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Usuario actualizado Exitosamente.')]);
 
-        return to_route('Usuariosindex');
+        return redirect()->back();
     }
     
     public function destroy(Request $request, User $user):RedirectResponse{
