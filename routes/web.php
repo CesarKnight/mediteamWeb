@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HistoriaController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PacienteController;
@@ -43,6 +44,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('{secretaria}/edit',      [SecretariaController::class, 'edit'])->name('edit');
         Route::patch('{secretaria}',         [SecretariaController::class, 'update'])->name('update');
         Route::delete('{secretaria}/destroy',[SecretariaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('historias')->name('Historias')->group(function () {
+        Route::get('index',                [HistoriaController::class, 'index'])->name('index');
+        Route::get('{historia}/show',      [HistoriaController::class, 'show'])->name('show');
+        Route::get('{historia}/edit',      [HistoriaController::class, 'edit'])->name('edit');
+        Route::patch('{historia}',         [HistoriaController::class, 'update'])->name('update');
+        Route::delete('{historia}/destroy',[HistoriaController::class, 'destroy'])->name('destroy');
     });
 });
 
