@@ -4,12 +4,15 @@ import CardHeader from '@/components/ui/card/CardHeader.vue';
 import CardTitle from '@/components/ui/card/CardTitle.vue';
 import CardDescription from '@/components/ui/card/CardDescription.vue';
 import CardContent from '@/components/ui/card/CardContent.vue';
+import { Stethoscope } from '@lucide/vue';
 import Separator from '../ui/separator/Separator.vue';
 
 defineProps<{
-    paciente: {
+    medico: {
         id: number;
-        estado: string;
+        especialidad: string | null;
+    };
+    user: {
         name: string;
         lastName: string;
         ci: string;
@@ -18,11 +21,6 @@ defineProps<{
         email: string;
     };
 }>();
-
-const estadoColor: Record<string, string> = {
-    alta: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-    baja: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-};
 </script>
 
 <template>
@@ -30,39 +28,37 @@ const estadoColor: Record<string, string> = {
         <CardHeader class="flex flex-row items-start justify-between">
             <div>
                 <CardTitle class="text-xl">
-                    {{ paciente.name }} {{ paciente.lastName }}
+                    {{ user.name }} {{ user.lastName }}
                 </CardTitle>
                 <Separator class="my-2"/>
-                <CardDescription>{{ paciente.email }}</CardDescription>
+                <CardDescription>{{ user.email }}</CardDescription>
             </div>
-            <span
-                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
-                :class="estadoColor[paciente.estado] ?? 'bg-gray-100 text-gray-700'"
-            >
-                {{ paciente.estado }}
-            </span>
+            <div class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                <Stethoscope class="h-3 w-3" />
+                {{ medico.especialidad ?? 'Sin especialidad' }}
+            </div>
         </CardHeader>
 
         <CardContent>
             <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="flex flex-col gap-1">
                     <dt class="text-xs font-medium text-muted-foreground">Carnet de identidad</dt>
-                    <dd class="text-sm font-medium">{{ paciente.ci }}</dd>
+                    <dd class="text-sm font-medium">{{ user.ci }}</dd>
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <dt class="text-xs font-medium text-muted-foreground">Fecha de nacimiento</dt>
-                    <dd class="text-sm font-medium">{{ paciente.fechaNacimiento }}</dd>
+                    <dd class="text-sm font-medium">{{ user.fechaNacimiento }}</dd>
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <dt class="text-xs font-medium text-muted-foreground">Teléfono</dt>
-                    <dd class="text-sm font-medium">{{ paciente.telefono ?? '—' }}</dd>
+                    <dd class="text-sm font-medium">{{ user.telefono ?? '—' }}</dd>
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <dt class="text-xs font-medium text-muted-foreground">Correo electrónico</dt>
-                    <dd class="text-sm font-medium">{{ paciente.email }}</dd>
+                    <dt class="text-xs font-medium text-muted-foreground">Especialidad</dt>
+                    <dd class="text-sm font-medium">{{ medico.especialidad ?? '—' }}</dd>
                 </div>
             </dl>
         </CardContent>

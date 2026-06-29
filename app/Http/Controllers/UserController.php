@@ -45,6 +45,12 @@ class UserController extends Controller
             ]);
         }
 
+        if (UsuarioTipo::tryFrom($request->input('tipo')) === UsuarioTipo::Medico) {
+            $usuario->medico()->create([
+                'especialidad' => 'pendiente',
+            ]);
+        }
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Usuario creado Exitosamente.')]);
 
         return to_route('Usuariosindex');

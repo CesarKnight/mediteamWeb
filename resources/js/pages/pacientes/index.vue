@@ -104,6 +104,7 @@ function executeDelete() {
                             v-for="paciente in pacientes"
                             :key="paciente.id"
                             class="hover:bg-muted/40 transition-colors"
+                            @click="() => router.visit(showPaciente({ paciente: paciente.id }))"
                         >
                             <TableCell>
                                 <div class="font-medium">{{ paciente.name }} {{ paciente.lastName }}</div>

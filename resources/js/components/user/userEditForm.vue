@@ -9,7 +9,7 @@ import { Form } from '@inertiajs/vue3';
 import type { RouteFormDefinition } from '@/wayfinder';
 
 defineProps<{
-    formDefinition: RouteFormDefinition<'put'>;
+    formDefinition: RouteFormDefinition<'put' | 'post' | 'patch'>;
     passwordRules: string;
     user: {
         id: number;

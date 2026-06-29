@@ -65,6 +65,7 @@ class PacienteController extends Controller
                 'ci'              => $paciente->user->ci,
                 'fechaNacimiento' => $paciente->user->fechaNacimiento,
                 'telefono'        => $paciente->user->telefono,
+                'tipo'        => $paciente->user->tipo,
                 'email'           => $paciente->user->email,
             ],
             'passwordRules' => Password::defaults()->toPasswordRulesString(),

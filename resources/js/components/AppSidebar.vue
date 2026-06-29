@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, SquareActivity, Users } from '@lucide/vue';
+import { BookOpen, FolderGit2, LayoutGrid, SquareActivity, Stethoscope, Users} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -18,6 +18,7 @@ import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 import { index as usuarioIndex} from '@/actions/App/Http/Controllers/UserController';
 import { index as pacienteIndex} from '@/actions/App/Http/Controllers/PacienteController';
+import { index as medicoIndex} from '@/actions/App/Http/Controllers/MedicoController';
 
 
 const mainNavItems: NavItem[] = [
@@ -35,6 +36,11 @@ const mainNavItems: NavItem[] = [
         title: 'Pacientes',
         href: pacienteIndex(),
         icon: SquareActivity,
+    },
+    {
+        title: 'Medicos',
+        href: medicoIndex(),
+        icon: Stethoscope,
     },
 ];
 
