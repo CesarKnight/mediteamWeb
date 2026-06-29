@@ -51,6 +51,12 @@ class UserController extends Controller
             ]);
         }
 
+        if (UsuarioTipo::tryFrom($request->input('tipo')) === UsuarioTipo::Secretaria) {
+            $usuario->secretaria()->create([
+                'profesion' => 'pendiente',
+            ]);
+        }
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Usuario creado Exitosamente.')]);
 
         return to_route('Usuariosindex');

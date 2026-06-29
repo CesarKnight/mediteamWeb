@@ -41,7 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('index',                  [SecretariaController::class, 'index'])->name('index');
         Route::get('{secretaria}/show',      [SecretariaController::class, 'show'])->name('show');
         Route::get('{secretaria}/edit',      [SecretariaController::class, 'edit'])->name('edit');
-        Route::patch('{secretaria}',         [SecretariaController::class, 'updateEspecialidad'])->name('updated');
+        Route::patch('{secretaria}',         [SecretariaController::class, 'update'])->name('update');
         Route::delete('{secretaria}/destroy',[SecretariaController::class, 'destroy'])->name('destroy');
     });
 });
