@@ -2,8 +2,9 @@
 
 namespace App\Enums;
 
-enum HistoriaEstado: string{
-    case Pendiente = 'pendiente';
-    case Anulado = 'anulado';
-    case Finalizado = 'finalizado';
+enum UsuarioTipo: string{
+    case Paciente = 'paciente';
+    case Medico = 'medico';
+    case Secretaria = 'secretaria';
+    case Administrador = 'administrador';
 }

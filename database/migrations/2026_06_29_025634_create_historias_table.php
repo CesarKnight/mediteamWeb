@@ -15,7 +15,8 @@ return new class extends Migration
         Schema::create('historias', function (Blueprint $table) {
             $table->id();
             $table->enum('estado', HistoriaEstado::cases());
-            $table->foreignId('medico_creador_id')->constrained('medico','id')->cascadeOnDelete();
+            $table->foreignId('paciente_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('medico_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

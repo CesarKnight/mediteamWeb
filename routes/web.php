@@ -48,8 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('historias')->name('Historias')->group(function () {
         Route::get('index',                [HistoriaController::class, 'index'])->name('index');
+        Route::get('create',               [HistoriaController::class, 'create'])->name('create');
+        Route::post('store',               [HistoriaController::class, 'store'])->name('store');
         Route::get('{historia}/show',      [HistoriaController::class, 'show'])->name('show');
-        Route::get('{historia}/edit',      [HistoriaController::class, 'edit'])->name('edit');
         Route::patch('{historia}',         [HistoriaController::class, 'update'])->name('update');
         Route::delete('{historia}/destroy',[HistoriaController::class, 'destroy'])->name('destroy');
     });
