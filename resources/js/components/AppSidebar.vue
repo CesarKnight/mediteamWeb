@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { Activity, BookOpen, Clipboard, Clock, DollarSign, FolderGit2, LayoutGrid, Megaphone, SquareActivity, Stethoscope, Users} from '@lucide/vue';
+import { Activity, BookOpen, Clipboard, Clock, DollarSign, FolderGit2, LayoutGrid, Megaphone, SquareActivity, Stethoscope, Users, Users2} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -14,11 +14,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Citasindex, dashboard, Historiasindex, Pagosindex, Secretariasindex, Serviciosindex } from '@/routes';
+import { Citasindex, Historiasindex, Pagosindex, Secretariasindex, Serviciosindex } from '@/routes';
 import type { NavItem } from '@/types';
 import { index as usuarioIndex} from '@/actions/App/Http/Controllers/UserController';
 import { index as pacienteIndex} from '@/actions/App/Http/Controllers/PacienteController';
 import { index as medicoIndex} from '@/actions/App/Http/Controllers/MedicoController';
+import { index as dashboard } from '@/actions/App/Http/Controllers/DashboardController';
 
 
 const mainNavItems: NavItem[] = [
@@ -71,14 +72,9 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
+        title: 'Equipo Medico',
+        href: '#',
+        icon: Users2,
     },
 ];
 </script>

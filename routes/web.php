@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\ConsultaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiagnosticoController;
 use App\Http\Controllers\HistoriaController;
 use App\Http\Controllers\MedicoController;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('usuarios')->name('Usuarios')->group(function () {
         Route::get('index', [UserController::class, 'index'])->name('index');
