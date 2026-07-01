@@ -136,6 +136,7 @@ watch(metodo, (val) => {
                                     class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
                                     <option value="pendiente">Pendiente</option>
                                     <option value="pagado">Pagado</option>
+                                    <option value="anulado">Anulado</option>
                                 </select>
                                 <!-- disabled selects don't submit; this carries the value through when locked -->
                                 <input v-if="estadoLocked" type="hidden" name="estado" value="pendiente" />

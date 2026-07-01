@@ -11,6 +11,9 @@ use App\Http\Controllers\SecretariaController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\PagoFacilCallbackController;
+use App\Http\Controllers\PagoQrController;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -105,6 +108,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('{pago}/show',   [PagoController::class, 'show'])->name('show');
         Route::delete('{pago}/destroy', [PagoController::class, 'destroy'])->name('destroy');
     });
+
+
+    Route::post('pagos/{pago}/pago-qr', [PagoQrController::class, 'store'])
+        ->name('PagoQr.store');
+
+    // External callback from PagoFácil's microservice — no CSRF, no auth
+    Route::post('pagofacil/callback', [PagoFacilCallbackController::class, 'handle'])
+        ->name('PagoFacil.callback')
+        ->withoutMiddleware([PreventRequestForgery::class]);
 });
 
 require __DIR__ . '/settings.php';

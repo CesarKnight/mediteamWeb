@@ -60,8 +60,7 @@ function executeDelete() {
             No hay pagos registrados aún.
         </p>
 
-        <Card v-for="pago in pagos" :key="pago.id"
-            class="cursor-pointer transition-colors hover:bg-muted/40"
+        <Card v-for="pago in pagos" :key="pago.id" class="cursor-pointer transition-colors hover:bg-muted/40"
             @click="() => router.visit(showPago({ pago: pago.id }))">
             <CardHeader class="flex flex-row items-start justify-between pb-2">
                 <div>
@@ -70,11 +69,11 @@ function executeDelete() {
                     </CardTitle>
                     <CardDescription>Pago #{{ pago.id }} · {{ formatDate(pago.created_at) }}</CardDescription>
                 </div>
-                <span
-                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
-                    :class="pago.estado === 'pagado'
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                        : 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'">
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize" :class="{
+                    'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300': pago.estado === 'pagado',
+                    'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300': pago.estado === 'pendiente',
+                    'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300': pago.estado === 'anulado',
+                }">
                     {{ pago.estado }}
                 </span>
             </CardHeader>

@@ -113,16 +113,19 @@ function executeDelete() {
                             <TableCell class="text-muted-foreground">{{ pago.servicio.titulo }}</TableCell>
                             <TableCell class="text-muted-foreground">{{ pago.total.toFixed(2) }} Bs.</TableCell>
                             <TableCell>
-                                <span class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
+                                <span
+                                    class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
                                     {{ pago.metodo === 'QR' ? 'QR' : 'Efectivo' }}
                                 </span>
                             </TableCell>
                             <TableCell>
                                 <span
                                     class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
-                                    :class="pago.estado === 'pagado'
-                                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                                        : 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'">
+                                    :class="{
+                                        'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300': pago.estado === 'pagado',
+                                        'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300': pago.estado === 'pendiente',
+                                        'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300': pago.estado === 'anulado',
+                                    }">
                                     {{ pago.estado }}
                                 </span>
                             </TableCell>

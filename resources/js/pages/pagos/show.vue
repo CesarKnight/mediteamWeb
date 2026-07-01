@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { QrCode } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
 import Card from '@/components/ui/card/Card.vue';
@@ -10,6 +10,10 @@ import CardContent from '@/components/ui/card/CardContent.vue';
 import {
     index as pagosIndex,
 } from '@/actions/App/Http/Controllers/PagoController';
+import { computed, ref } from 'vue';
+import Spinner from '@/components/ui/spinner/Spinner.vue';
+import { store as storePagoQr } from '@/actions/App/Http/Controllers/PagoQrController';
+import PagoQrCard from '@/components/pagoQr/pagoQrCard.vue';
 
 const props = defineProps<{
     pago: {
@@ -20,6 +24,7 @@ const props = defineProps<{
         created_at: string;
         paciente: { id: number; name: string; lastName: string };
         servicio: { id: number; titulo: string; precio: number };
+        pagoQrs: { id: number; estado: string; expiracion: string | null; qr_base64: string | null }[];
     };
 }>();
 
@@ -37,12 +42,30 @@ function formatDate(dateStr: string) {
         day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
     }).format(new Date(dateStr));
 }
+
+
+// funciones para pago qr
+
+const latestPagoQr = computed(() => {
+    const qrs = props.pago.pagoQrs;
+    return qrs.length > 0 ? qrs[qrs.length - 1] : null;
+});
+
+const creatingQr = ref(false);
+
+function generarQr() {
+    creatingQr.value = true;
+    router.post(storePagoQr({ pago: props.pago.id }), {}, {
+        onFinish: () => { creatingQr.value = false; },
+    });
+}
 </script>
 
 <template>
+
     <Head :title="`Pago #${pago.id}`" />
 
-    <div class="flex flex-row justify-center m-6">
+    <div class="flex flex-col items-center m-6">
         <Card class="w-full lg:w-1/2">
             <CardHeader>
                 <CardTitle>Pago #{{ pago.id }}</CardTitle>
@@ -78,24 +101,31 @@ function formatDate(dateStr: string) {
                     <span class="text-xs font-medium text-muted-foreground">Estado</span>
                     <span
                         class="inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
-                        :class="pago.estado === 'pagado'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                            : 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'">
+                        :class="{
+                            'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300': pago.estado === 'pagado',
+                            'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300': pago.estado === 'pendiente',
+                            'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300': pago.estado === 'anulado',
+                        }">
                         {{ pago.estado }}
                     </span>
                 </div>
 
                 <div v-if="pago.metodo === 'QR'" class="border-t border-input pt-4">
-                    <Button type="button" disabled variant="outline" title="Próximamente">
+                    <Button v-if="!latestPagoQr || latestPagoQr.estado === 'anulado'" type="button"
+                        :disabled="creatingQr" @click="generarQr" class="w-full justify-center">
+                        <Spinner v-if="creatingQr" />
                         <QrCode class="mr-2 h-4 w-4" />
-                        Registrar pago QR
+                        Generar código QR
                     </Button>
-                    <p class="mt-2 text-xs text-muted-foreground">
-                        El seguimiento de pagos QR estará disponible próximamente.
+                    <p v-else class="text-xs text-muted-foreground">
+                        Ya existe un código QR {{ latestPagoQr.estado === 'pendiente' ? 'pendiente' : 'confirmado' }}
+                        para este pago.
                     </p>
                 </div>
 
             </CardContent>
         </Card>
+
+        <PagoQrCard v-if="latestPagoQr" :pago-qr="latestPagoQr" />
     </div>
 </template>

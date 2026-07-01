@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('paciente_id')->constrained('pacientes')->cascadeOnDelete();
             $table->foreignId('servicio_id')->constrained('servicios')->cascadeOnDelete();
             $table->float('total');
-            $table->enum('estado', ['pagado', 'pendiente'])->default('pendiente');
+            $table->enum('estado', ['pagado', 'pendiente','anulado'])->default('pendiente');
             $table->enum('metodo', ['efectivo', 'QR']);
             $table->timestamps();
         });

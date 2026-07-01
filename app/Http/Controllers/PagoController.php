@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Pago;
 use App\Models\Paciente;
 use App\Models\Servicio;
+use App\Services\PagoFacilService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PagoController extends Controller
 {
+    public function __construct(private PagoFacilService $pagoFacil) {}
+    
     private function formatPago(Pago $p): array
     {
         return [
@@ -31,6 +35,12 @@ class PagoController extends Controller
                 'titulo' => $p->servicio->titulo,
                 'precio' => $p->servicio->precio,
             ],
+            'pagoQrs' => $p->pagoQrs->map(fn($q) => [
+                'id'         => $q->id,
+                'estado'     => $q->estado,
+                'expiracion' => $q->expiracion,
+                'qr_base64'  => $q->qr_base64,
+            ]),
         ];
     }
 
@@ -68,7 +78,7 @@ class PagoController extends Controller
             'paciente_id' => ['required', 'exists:pacientes,id'],
             'servicio_id' => ['required', 'exists:servicios,id'],
             'total'       => ['required', 'numeric', 'min:0'],
-            'estado'      => ['required', 'string', 'in:pagado,pendiente'],
+            'estado'      => ['required', 'string', 'in:pagado,pendiente,anulado'],
             'metodo'      => ['required', 'string', 'in:efectivo,QR'],
         ])->validate();
 
@@ -79,9 +89,46 @@ class PagoController extends Controller
         return to_route('Pagosshow', $pago);
     }
 
+    private function syncPendingPagoQrs(Pago $pago): void
+    {
+        $pendientes = $pago->pagoQrs()->where('estado', 'pendiente')->get();
+
+        foreach ($pendientes as $pagoQr) {
+            if (!$pagoQr->pago_facil_id) {
+                continue;
+            }
+
+            try {
+                $values = $this->pagoFacil->queryTransaction((int) $pagoQr->pago_facil_id);
+                $paymentStatus = $values['paymentStatus'] ?? null;
+
+                if ($paymentStatus === 2) {
+                    $pagoQr->update(['estado' => 'exitoso']);
+                    $pago->update(['estado' => 'pagado']);
+                } elseif ($paymentStatus === 4) {
+                    $pagoQr->update(['estado' => 'anulado']);
+                    $pago->update(['estado' => 'anulado']);
+                }
+                // paymentStatus === 1 ("En Proceso") -> still pending, no change
+            } catch (\Throwable $e) {
+                Log::error('PagoFacil query-transaction error', [
+                    'pago_qr_id' => $pagoQr->id,
+                    'error'      => $e->getMessage(),
+                ]);
+                // Swallow the error — a failed status check shouldn't block
+                // the page from rendering with whatever data we already have.
+            }
+        }
+    }
+
     public function show(Pago $pago): Response
     {
-        $pago->load(['paciente.user', 'servicio']);
+        $pago->load(['paciente.user', 'servicio', 'pagoQrs']);
+
+        if ($pago->metodo === 'QR') {
+            $this->syncPendingPagoQrs($pago);
+            $pago->refresh()->load('pagoQrs');
+        }
 
         return Inertia::render('pagos/show', [
             'pago' => $this->formatPago($pago),

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'paciente_id',
@@ -28,5 +29,8 @@ class Pago extends Model
         return $this->belongsTo(Servicio::class);
     }
 
-    // pagoQR(): HasOne — added once the PagoQR feature exists
+    public function pagoQrs(): HasMany
+    {
+        return $this->hasMany(PagoQr::class);
+    }
 }
