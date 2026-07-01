@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CitaController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\DiagnosticoController;
 use App\Http\Controllers\HistoriaController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\SecretariaController;
+use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TratamientoController;
 use Illuminate\Support\Facades\Route;
 
@@ -76,6 +78,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('store',                   [TratamientoController::class, 'store'])->name('store');
         Route::patch('{tratamiento}',          [TratamientoController::class, 'update'])->name('update');
         Route::delete('{tratamiento}/destroy', [TratamientoController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('servicios')->name('Servicios')->group(function () {
+        Route::get('index',                [ServicioController::class, 'index'])->name('index');
+        Route::get('create',               [ServicioController::class, 'create'])->name('create');
+        Route::post('store',               [ServicioController::class, 'store'])->name('store');
+        Route::get('{servicio}/edit',      [ServicioController::class, 'edit'])->name('edit');
+        Route::patch('{servicio}',         [ServicioController::class, 'update'])->name('update');
+        Route::delete('{servicio}/destroy', [ServicioController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('citas')->name('Citas')->group(function () {
+        Route::get('index',           [CitaController::class, 'index'])->name('index');
+        Route::get('create',          [CitaController::class, 'create'])->name('create');
+        Route::post('store',          [CitaController::class, 'store'])->name('store');
+        Route::patch('{cita}/estado', [CitaController::class, 'updateEstado'])->name('updateEstado');
+        Route::delete('{cita}/destroy', [CitaController::class, 'destroy'])->name('destroy');
     });
 });
 

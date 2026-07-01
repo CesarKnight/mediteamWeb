@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Clipboard, FolderGit2, LayoutGrid, Megaphone, SquareActivity, Stethoscope, Users} from '@lucide/vue';
+import { Activity, BookOpen, Clipboard, Clock, FolderGit2, LayoutGrid, Megaphone, SquareActivity, Stethoscope, Users} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -14,7 +14,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, Historiasindex, Secretariasindex } from '@/routes';
+import { Citasindex, dashboard, Historiasindex, Secretariasindex, Serviciosindex } from '@/routes';
 import type { NavItem } from '@/types';
 import { index as usuarioIndex} from '@/actions/App/Http/Controllers/UserController';
 import { index as pacienteIndex} from '@/actions/App/Http/Controllers/PacienteController';
@@ -51,6 +51,16 @@ const mainNavItems: NavItem[] = [
         title: 'Historia Clinica',
         href: Historiasindex(),
         icon: Clipboard,
+    },
+    {
+        title: 'Servicios',
+        href: Serviciosindex(),
+        icon: Activity,
+    },
+    {
+        title: 'Citas',
+        href: Citasindex(),
+        icon: Clock,
     },
 ];
 

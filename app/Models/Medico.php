@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Medico extends Model
 {
     use HasFactory;
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -25,10 +25,15 @@ class Medico extends Model
     {
         return $this->hasMany(Historia::class);
     }
-    
+
     public function historiasInvolucradas(): BelongsToMany
     {
         return $this->belongsToMany(Historia::class, 'historia_medico')
-                    ->withTimestamps();
+            ->withTimestamps();
+    }
+
+    public function citas(): HasMany
+    {
+        return $this->hasMany(Cita::class);
     }
 }

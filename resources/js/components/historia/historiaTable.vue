@@ -149,7 +149,7 @@ function executeDelete() {
                             <TableCell class="text-right" @click.stop>
                                 <div class="flex justify-end gap-2">
                                     <Button variant="ghost" size="icon" as-child
-                                        @click="showHistoria({ historia: historia.id })">
+                                        @click="() => router.visit(showHistoria({ historia: historia.id }))">
                                         <a>
                                             <Eye class="h-4 w-4 text-muted-foreground" />
                                             <span class="sr-only">Ver historia {{ historia.id }}</span>
