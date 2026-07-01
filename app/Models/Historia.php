@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'estado',
@@ -19,17 +20,22 @@ class Historia extends Model
 
     public function medicoCreador(): BelongsTo
     {
-        return $this->belongsTo(Medico::class,'medico_id');
+        return $this->belongsTo(Medico::class, 'medico_id');
     }
 
     public function medicosInvolucrados(): BelongsToMany
     {
         return $this->belongsToMany(Medico::class, 'historia_medico')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function paciente(): BelongsTo
     {
         return $this->belongsTo(Paciente::class);
+    }
+
+    public function consultas(): HasMany
+    {
+        return $this->hasMany(Consulta::class);
     }
 }

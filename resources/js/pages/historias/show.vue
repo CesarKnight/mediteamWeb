@@ -16,6 +16,7 @@ import {
     index as historiasIndex,
     update as updateHistoria,
 } from '@/actions/App/Http/Controllers/HistoriaController';
+import ConsultaForm from '@/components/consulta/consultaForm.vue';
 
 const props = defineProps<{
     historia: {
@@ -24,6 +25,7 @@ const props = defineProps<{
         paciente: { id: number; name: string; lastName: string };
         medicoCreador: { id: number; name: string; lastName: string; especialidad: string | null };
         medicosInvolucrados: { id: number; name: string; lastName: string }[];
+        consultas: { id: number; motivo: string; peso: number; altura: number }[];
     };
     pacientes: { id: number; name: string; lastName: string }[];
     medicos: { id: number; name: string; lastName: string; especialidad: string | null }[];
@@ -50,13 +52,30 @@ function toggleInvolucrado(id: number, checked: boolean) {
         selectedInvolucrados.value = selectedInvolucrados.value.filter(m => m !== id);
     }
 }
+
+// vars para mostrar consultas
+const showCreateConsulta = ref(false);
+const editingConsultaId = ref<number | null>(null);
+
+function openCreateConsulta() {
+    editingConsultaId.value = null;
+    showCreateConsulta.value = true;
+}
+function openEditConsulta(id: number) {
+    showCreateConsulta.value = false;
+    editingConsultaId.value = id;
+}
+function closeConsultaForms() {
+    showCreateConsulta.value = false;
+    editingConsultaId.value = null;
+}
 </script>
 
 <template>
 
     <Head :title="`Historia #${historia.id}`" />
 
-    <div class="flex flex-row justify-center m-6">
+    <div class="flex flex-col items-center m-6">
         <Card class="w-full lg:w-1/2">
             <CardHeader>
                 <CardTitle>Historia Clínica #{{ historia.id }}</CardTitle>
@@ -128,6 +147,41 @@ function toggleInvolucrado(id: number, checked: boolean) {
                         </Button>
                     </div>
                 </Form>
+            </CardContent>
+        </Card>
+
+
+        <Card class="w-full lg:w-1/2 mt-6">
+            <CardHeader>
+                <CardTitle>Consultas</CardTitle>
+                <CardDescription>Registros de consultas asociadas a esta historia.</CardDescription>
+            </CardHeader>
+            <CardContent class="flex flex-col gap-4">
+
+                <p v-if="historia.consultas.length === 0 && !showCreateConsulta" class="text-sm text-muted-foreground">
+                    No hay consultas registradas.
+                </p>
+
+                <template v-for="c in historia.consultas" :key="c.id">
+                    <ConsultaForm v-if="editingConsultaId === c.id" :historia-id="historia.id" :consulta="c"
+                        @cancel="closeConsultaForms" @saved="closeConsultaForms" />
+                    <div v-else class="flex items-center justify-between rounded-md border border-input p-3 text-sm">
+                        <div>
+                            <p class="font-medium">{{ c.motivo }}</p>
+                            <p class="text-muted-foreground">Peso: {{ c.peso }} kg · Altura: {{ c.altura }} m</p>
+                        </div>
+                        <Button variant="outline" size="sm" @click="openEditConsulta(c.id)">Editar</Button>
+                    </div>
+                </template>
+
+                <ConsultaForm v-if="showCreateConsulta" :historia-id="historia.id" @cancel="closeConsultaForms"
+                    @saved="closeConsultaForms" />
+
+                <div class="flex flex-wrap gap-2 border-t border-input pt-4">
+                    <Button v-if="!showCreateConsulta" @click="openCreateConsulta">
+                        + Agregar consulta
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     </div>

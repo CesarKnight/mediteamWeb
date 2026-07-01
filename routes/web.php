@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\HistoriaController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\UserController;
@@ -11,8 +12,8 @@ Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
-        
-    Route::prefix('usuarios')->name('Usuarios')->group(function (){
+
+    Route::prefix('usuarios')->name('Usuarios')->group(function () {
         Route::get('index', [UserController::class, 'index'])->name('index');
         Route::get('create', [UserController::class, 'create'])->name('create');
         Route::post('store', [UserController::class, 'store'])->name('store');
@@ -43,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('{secretaria}/show',      [SecretariaController::class, 'show'])->name('show');
         Route::get('{secretaria}/edit',      [SecretariaController::class, 'edit'])->name('edit');
         Route::patch('{secretaria}',         [SecretariaController::class, 'update'])->name('update');
-        Route::delete('{secretaria}/destroy',[SecretariaController::class, 'destroy'])->name('destroy');
+        Route::delete('{secretaria}/destroy', [SecretariaController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('historias')->name('Historias')->group(function () {
@@ -52,8 +53,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('store',               [HistoriaController::class, 'store'])->name('store');
         Route::get('{historia}/show',      [HistoriaController::class, 'show'])->name('show');
         Route::patch('{historia}',         [HistoriaController::class, 'update'])->name('update');
-        Route::delete('{historia}/destroy',[HistoriaController::class, 'destroy'])->name('destroy');
+        Route::delete('{historia}/destroy', [HistoriaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('historias/{historia}/consultas')->name('Consultas')->scopeBindings()->group(function () {
+        Route::get('create',                [ConsultaController::class, 'create'])->name('create');
+        Route::post('store',                [ConsultaController::class, 'store'])->name('store');
+        Route::get('{consulta}/show',       [ConsultaController::class, 'show'])->name('show');
+        Route::patch('{consulta}',          [ConsultaController::class, 'update'])->name('update');
+        Route::delete('{consulta}/destroy', [ConsultaController::class, 'destroy'])->name('destroy');
     });
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
