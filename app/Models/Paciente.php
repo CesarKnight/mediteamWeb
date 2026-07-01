@@ -15,9 +15,6 @@ class Paciente extends Model
 {
     use HasFactory;
 
-    /**
-     * Get the user associated with the paciente.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -31,5 +28,10 @@ class Paciente extends Model
     public function citas(): HasMany
     {
         return $this->hasMany(Cita::class);
+    }
+
+    public function pagos(): HasMany
+    {
+        return $this->hasMany(Pago::class);
     }
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\SecretariaController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TratamientoController;
+use App\Http\Controllers\PagoController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -95,6 +96,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('store',          [CitaController::class, 'store'])->name('store');
         Route::patch('{cita}/estado', [CitaController::class, 'updateEstado'])->name('updateEstado');
         Route::delete('{cita}/destroy', [CitaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('pagos')->name('Pagos')->group(function () {
+        Route::get('index',         [PagoController::class, 'index'])->name('index');
+        Route::get('create',        [PagoController::class, 'create'])->name('create');
+        Route::post('store',        [PagoController::class, 'store'])->name('store');
+        Route::get('{pago}/show',   [PagoController::class, 'show'])->name('show');
+        Route::delete('{pago}/destroy', [PagoController::class, 'destroy'])->name('destroy');
     });
 });
 
