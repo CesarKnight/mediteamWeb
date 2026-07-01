@@ -48,6 +48,12 @@ class HistoriaController extends Controller
                 'gravedad'    => $d->gravedad,
                 'created_at'  => $d->created_at,
             ]),
+            'tratamientos' => $h->tratamientos->map(fn($t) => [
+                'id'               => $t->id,
+                'medicamento'      => $t->medicamento,
+                'frecuencia_horas' => $t->frecuencia_horas,
+                'created_at'       => $t->created_at,
+            ]),
         ];
     }
 
@@ -58,7 +64,8 @@ class HistoriaController extends Controller
             'medicoCreador.user',
             'medicosInvolucrados.user',
             'consultas',
-            'diagnosticos'
+            'diagnosticos',
+            'tratamientos'
         ])->get()->map(fn($h) => $this->formatHistoria($h));
 
         return Inertia::render('historias/index', [
@@ -73,7 +80,8 @@ class HistoriaController extends Controller
             'medicoCreador.user',
             'medicosInvolucrados.user',
             'consultas',
-            'diagnosticos'
+            'diagnosticos',
+            'tratamientos'
         ]);
 
         return Inertia::render('historias/show', [

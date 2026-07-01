@@ -18,6 +18,8 @@ import {
 } from '@/actions/App/Http/Controllers/HistoriaController';
 import ConsultaForm from '@/components/consulta/consultaForm.vue';
 import DiagnosticoForm from '@/components/diagnostico/diagnosticoForm.vue';
+import TratamientoForm from '@/components/tratamiento/tratamientoForm.vue';
+import { Plus } from '@lucide/vue';
 
 const props = defineProps<{
     historia: {
@@ -28,6 +30,7 @@ const props = defineProps<{
         medicosInvolucrados: { id: number; name: string; lastName: string }[];
         consultas: { id: number; motivo: string; peso: number; altura: number; created_at: string }[];
         diagnosticos: { id: number; diagnostico: string; enfermedad: string; gravedad: string; created_at: string }[];
+        tratamientos: { id: number; medicamento: string; frecuencia_horas: number; created_at: string }[];
     };
     pacientes: { id: number; name: string; lastName: string }[];
     medicos: { id: number; name: string; lastName: string; especialidad: string | null }[];
@@ -94,6 +97,25 @@ function formatDate(dateStr: string) {
     return new Date(dateStr).toLocaleDateString('es-BO', {
         day: '2-digit', month: '2-digit', year: 'numeric',
     });
+}
+
+//funciones de tratamientos
+
+
+const showCreateTratamiento = ref(false);
+const editingTratamientoId = ref<number | null>(null);
+
+function openCreateTratamiento() {
+    editingTratamientoId.value = null;
+    showCreateTratamiento.value = true;
+}
+function openEditTratamiento(id: number) {
+    showCreateTratamiento.value = false;
+    editingTratamientoId.value = id;
+}
+function closeTratamientoForms() {
+    showCreateTratamiento.value = false;
+    editingTratamientoId.value = null;
 }
 </script>
 
@@ -208,7 +230,7 @@ function formatDate(dateStr: string) {
 
                 <div class="flex flex-wrap gap-2 border-t border-input pt-4">
                     <Button v-if="!showCreateConsulta" @click="openCreateConsulta">
-                        + Agregar consulta
+                        <Plus/>  Agregar consulta
                     </Button>
                 </div>
             </CardContent>
@@ -252,7 +274,48 @@ function formatDate(dateStr: string) {
 
                 <div class="flex flex-wrap gap-2 border-t border-input pt-4">
                     <Button type="button" v-if="!showCreateDiagnostico" @click="openCreateDiagnostico">
-                        + Agregar diagnóstico
+                        <Plus/>  Agregar diagnóstico
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+
+        <!-- carta de tratamientos -->
+        <Card class="w-full lg:w-1/2 mt-6">
+            <CardHeader>
+                <CardTitle>Tratamientos</CardTitle>
+                <CardDescription>Tratamientos asociados a esta historia.</CardDescription>
+            </CardHeader>
+            <CardContent class="flex flex-col gap-4">
+
+                <p v-if="historia.tratamientos.length === 0 && !showCreateTratamiento"
+                    class="text-sm text-muted-foreground">
+                    No hay tratamientos registrados.
+                </p>
+
+                <template v-for="t in historia.tratamientos" :key="t.id">
+                    <TratamientoForm v-if="editingTratamientoId === t.id" :historia-id="historia.id" :tratamiento="t"
+                        @cancel="closeTratamientoForms" @saved="closeTratamientoForms" />
+                    <div v-else class="flex items-center justify-between rounded-md border border-input p-3 text-sm">
+                        <div>
+                            <p class="font-medium">{{ t.medicamento }}</p>
+                            <p class="text-muted-foreground">Cada {{ t.frecuencia_horas }} horas</p>
+                            <p class="text-xs text-muted-foreground mt-1">
+                                Registrado: {{ formatDate(t.created_at) }}
+                            </p>
+                        </div>
+                        <Button type="button" variant="outline" size="sm" @click="openEditTratamiento(t.id)">
+                            Editar
+                        </Button>
+                    </div>
+                </template>
+
+                <TratamientoForm v-if="showCreateTratamiento" :historia-id="historia.id" @cancel="closeTratamientoForms"
+                    @saved="closeTratamientoForms" />
+
+                <div class="flex flex-wrap gap-2 border-t border-input pt-4">
+                    <Button type="button" v-if="!showCreateTratamiento" @click="openCreateTratamiento">
+                        <Plus/> Agregar tratamiento
                     </Button>
                 </div>
             </CardContent>

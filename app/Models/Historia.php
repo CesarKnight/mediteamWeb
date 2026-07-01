@@ -43,4 +43,9 @@ class Historia extends Model
     {
         return $this->hasMany(Diagnostico::class);
     }
+
+    public function tratamientos(): HasMany
+    {
+        return $this->hasMany(Tratamiento::class);
+    }
 }

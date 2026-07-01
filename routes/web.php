@@ -7,6 +7,7 @@ use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\SecretariaController;
+use App\Http\Controllers\TratamientoController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -69,6 +70,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('store',                  [DiagnosticoController::class, 'store'])->name('store');
         Route::patch('{diagnostico}',         [DiagnosticoController::class, 'update'])->name('update');
         Route::delete('{diagnostico}/destroy', [DiagnosticoController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('historias/{historia}/tratamientos')->name('Tratamientos')->scopeBindings()->group(function () {
+        Route::post('store',                   [TratamientoController::class, 'store'])->name('store');
+        Route::patch('{tratamiento}',          [TratamientoController::class, 'update'])->name('update');
+        Route::delete('{tratamiento}/destroy', [TratamientoController::class, 'destroy'])->name('destroy');
     });
 });
 
