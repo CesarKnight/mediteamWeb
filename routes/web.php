@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsultaController;
+use App\Http\Controllers\DiagnosticoController;
 use App\Http\Controllers\HistoriaController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\UserController;
@@ -62,6 +63,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('{consulta}/show',       [ConsultaController::class, 'show'])->name('show');
         Route::patch('{consulta}',          [ConsultaController::class, 'update'])->name('update');
         Route::delete('{consulta}/destroy', [ConsultaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('historias/{historia}/diagnosticos')->name('Diagnosticos')->scopeBindings()->group(function () {
+        Route::post('store',                  [DiagnosticoController::class, 'store'])->name('store');
+        Route::patch('{diagnostico}',         [DiagnosticoController::class, 'update'])->name('update');
+        Route::delete('{diagnostico}/destroy', [DiagnosticoController::class, 'destroy'])->name('destroy');
     });
 });
 

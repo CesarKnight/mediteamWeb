@@ -38,4 +38,9 @@ class Historia extends Model
     {
         return $this->hasMany(Consulta::class);
     }
+
+    public function diagnosticos(): HasMany
+    {
+        return $this->hasMany(Diagnostico::class);
+    }
 }

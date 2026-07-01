@@ -17,6 +17,7 @@ import {
     update as updateHistoria,
 } from '@/actions/App/Http/Controllers/HistoriaController';
 import ConsultaForm from '@/components/consulta/consultaForm.vue';
+import DiagnosticoForm from '@/components/diagnostico/diagnosticoForm.vue';
 
 const props = defineProps<{
     historia: {
@@ -25,7 +26,8 @@ const props = defineProps<{
         paciente: { id: number; name: string; lastName: string };
         medicoCreador: { id: number; name: string; lastName: string; especialidad: string | null };
         medicosInvolucrados: { id: number; name: string; lastName: string }[];
-        consultas: { id: number; motivo: string; peso: number; altura: number }[];
+        consultas: { id: number; motivo: string; peso: number; altura: number; created_at: string }[];
+        diagnosticos: { id: number; diagnostico: string; enfermedad: string; gravedad: string; created_at: string }[];
     };
     pacientes: { id: number; name: string; lastName: string }[];
     medicos: { id: number; name: string; lastName: string; especialidad: string | null }[];
@@ -68,6 +70,30 @@ function openEditConsulta(id: number) {
 function closeConsultaForms() {
     showCreateConsulta.value = false;
     editingConsultaId.value = null;
+}
+
+//funciones para diagnosticos
+
+const showCreateDiagnostico = ref(false);
+const editingDiagnosticoId = ref<number | null>(null);
+
+function openCreateDiagnostico() {
+    editingDiagnosticoId.value = null;
+    showCreateDiagnostico.value = true;
+}
+function openEditDiagnostico(id: number) {
+    showCreateDiagnostico.value = false;
+    editingDiagnosticoId.value = id;
+}
+function closeDiagnosticoForms() {
+    showCreateDiagnostico.value = false;
+    editingDiagnosticoId.value = null;
+}
+
+function formatDate(dateStr: string) {
+    return new Date(dateStr).toLocaleDateString('es-BO', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+    });
 }
 </script>
 
@@ -150,7 +176,7 @@ function closeConsultaForms() {
             </CardContent>
         </Card>
 
-
+        <!-- Carta de consultas -->
         <Card class="w-full lg:w-1/2 mt-6">
             <CardHeader>
                 <CardTitle>Consultas</CardTitle>
@@ -169,6 +195,9 @@ function closeConsultaForms() {
                         <div>
                             <p class="font-medium">{{ c.motivo }}</p>
                             <p class="text-muted-foreground">Peso: {{ c.peso }} kg · Altura: {{ c.altura }} m</p>
+                            <p class="text-xs text-muted-foreground mt-1">
+                                Registrado: {{ formatDate(c.created_at) }}
+                            </p>
                         </div>
                         <Button variant="outline" size="sm" @click="openEditConsulta(c.id)">Editar</Button>
                     </div>
@@ -180,6 +209,50 @@ function closeConsultaForms() {
                 <div class="flex flex-wrap gap-2 border-t border-input pt-4">
                     <Button v-if="!showCreateConsulta" @click="openCreateConsulta">
                         + Agregar consulta
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+
+
+        <!-- carta de diagnosticos -->
+        <Card class="w-full lg:w-1/2 mt-6">
+            <CardHeader>
+                <CardTitle>Diagnósticos</CardTitle>
+                <CardDescription>Diagnósticos asociados a esta historia.</CardDescription>
+            </CardHeader>
+            <CardContent class="flex flex-col gap-4">
+
+                <p v-if="historia.diagnosticos.length === 0 && !showCreateDiagnostico"
+                    class="text-sm text-muted-foreground">
+                    No hay diagnósticos registrados.
+                </p>
+
+                <template v-for="d in historia.diagnosticos" :key="d.id">
+                    <DiagnosticoForm v-if="editingDiagnosticoId === d.id" :historia-id="historia.id" :diagnostico="d"
+                        @cancel="closeDiagnosticoForms" @saved="closeDiagnosticoForms" />
+                    <div v-else class="flex items-center justify-between rounded-md border border-input p-3 text-sm">
+                        <div>
+                            <p class="font-medium">{{ d.diagnostico }}</p>
+                            <p class="text-muted-foreground">
+                                {{ d.enfermedad }} · Gravedad: {{ d.gravedad }}
+                            </p>
+                            <p class="text-xs text-muted-foreground mt-1">
+                                Registrado: {{ formatDate(d.created_at) }}
+                            </p>
+                        </div>
+                        <Button type="button" variant="outline" size="sm" @click="openEditDiagnostico(d.id)">
+                            Editar
+                        </Button>
+                    </div>
+                </template>
+
+                <DiagnosticoForm v-if="showCreateDiagnostico" :historia-id="historia.id" @cancel="closeDiagnosticoForms"
+                    @saved="closeDiagnosticoForms" />
+
+                <div class="flex flex-wrap gap-2 border-t border-input pt-4">
+                    <Button type="button" v-if="!showCreateDiagnostico" @click="openCreateDiagnostico">
+                        + Agregar diagnóstico
                     </Button>
                 </div>
             </CardContent>

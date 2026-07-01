@@ -8,31 +8,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class ConsultaController extends Controller
 {
-    private function formatConsulta(Consulta $c): array
-    {
-        return [
-            'id'           => $c->id,
-            'motivo'       => $c->motivo,
-            'peso'         => $c->peso,
-            'altura'       => $c->altura,
-            'fecha_creacion' => $c->created_at,
-            'historia_id'  => $c->historia_id,
-        ];
-    }
-
-    public function create(Historia $historia): Response
-    {
-        return Inertia::render('consultas/create', [
-            'historia' => [
-                'id' => $historia->id,
-                'estado' => $historia->estado,
-            ],
-        ]);
-    }
 
     public function store(Request $request, Historia $historia): RedirectResponse
     {
@@ -47,16 +25,6 @@ class ConsultaController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Consulta registrada exitosamente.')]);
 
         return to_route('Historiasshow', $historia);
-    }
-
-    public function show(Historia $historia, Consulta $consulta): Response
-    {
-        return Inertia::render('consultas/show', [
-            'historia' => [
-                'id' => $historia->id,
-            ],
-            'consulta' => $this->formatConsulta($consulta),
-        ]);
     }
 
     public function update(Request $request, Historia $historia, Consulta $consulta): RedirectResponse
