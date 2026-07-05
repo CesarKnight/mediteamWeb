@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { Activity, BookOpen, Clipboard, Clock, DollarSign, FolderGit2, LayoutGrid, Megaphone, SquareActivity, Stethoscope, Users, Users2} from '@lucide/vue';
+import { Activity, BookOpen, CircleArrowLeft, Clipboard, ClipboardClock, Clock, DollarSign, FolderGit2, LayoutGrid, Megaphone, Paperclip, SquareActivity, Stethoscope, Users, Users2} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -14,7 +14,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Citasindex, Historiasindex, home, Pagosindex, Secretariasindex, Serviciosindex } from '@/routes';
+import { Bitacoraindex, Citasindex, Historiasindex, home, Pagosindex, Reportesindex, Secretariasindex, Serviciosindex } from '@/routes';
 import type { NavItem } from '@/types';
 import { index as usuarioIndex} from '@/actions/App/Http/Controllers/UserController';
 import { index as pacienteIndex} from '@/actions/App/Http/Controllers/PacienteController';
@@ -68,6 +68,16 @@ const mainNavItems: NavItem[] = [
         href: Pagosindex(),
         icon: DollarSign,
     },
+    {
+        title: 'Reportes',
+        href: Reportesindex(),
+        icon: Paperclip,
+    },
+    {
+        title: 'Bitacora',
+        href: Bitacoraindex(),
+        icon: ClipboardClock,
+    }
 ];
 
 const footerNavItems: NavItem[] = [

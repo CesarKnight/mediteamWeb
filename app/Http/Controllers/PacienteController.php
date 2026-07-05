@@ -33,22 +33,22 @@ class PacienteController extends Controller
     }
 
     public function show(Paciente $paciente)
-{
-    $paciente->load('user');
+    {
+        $paciente->load('user');
 
-    return Inertia::render('pacientes/show', [
-        'paciente' => [
-            'id'              => $paciente->id,
-            'estado'          => $paciente->estado,
-            'name'            => $paciente->user->name,
-            'lastName'        => $paciente->user->lastName,
-            'ci'              => $paciente->user->ci,
-            'fechaNacimiento' => $paciente->user->fechaNacimiento,
-            'telefono'        => $paciente->user->telefono,
-            'email'           => $paciente->user->email,
-        ],
-    ]);
-}
+        return Inertia::render('pacientes/show', [
+            'paciente' => [
+                'id'              => $paciente->id,
+                'estado'          => $paciente->estado,
+                'name'            => $paciente->user->name,
+                'lastName'        => $paciente->user->lastName,
+                'ci'              => $paciente->user->ci,
+                'fechaNacimiento' => $paciente->user->fechaNacimiento,
+                'telefono'        => $paciente->user->telefono,
+                'email'           => $paciente->user->email,
+            ],
+        ]);
+    }
     public function edit(Paciente $paciente)
     {
         $paciente->load('user');

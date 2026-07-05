@@ -19,7 +19,7 @@ const props = defineProps<{
         fechaNacimiento: string;
         telefono: string;
         email: string;
-    };
+    }
 }>();
 
 defineOptions({

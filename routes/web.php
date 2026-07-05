@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\DashboardController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PagoFacilCallbackController;
 use App\Http\Controllers\PagoQrController;
+use App\Http\Controllers\ReporteController;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 
@@ -110,6 +112,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('{pago}/destroy', [PagoController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('reportes')->name('Reportes')->group(function () {
+        Route::get('index',                       [ReporteController::class, 'index'])->name('index');
+        Route::get('historial-paciente',          [ReporteController::class, 'historialPaciente'])->name('historialPaciente');
+        Route::get('historial-tratamientos',      [ReporteController::class, 'historialTratamientos'])->name('historialTratamientos');
+        Route::get('historial-medico',            [ReporteController::class, 'historialMedico'])->name('historialMedico');
+        Route::get('historial-citas',             [ReporteController::class, 'historialCitas'])->name('historialCitas');
+        Route::get('historial-pagos-paciente',    [ReporteController::class, 'historialPagosPaciente'])->name('historialPagosPaciente');
+    });
+
+    Route::prefix('bitacora')->name('Bitacora')->group(function () {
+        Route::get('index',         [BitacoraController::class, 'index'])->name('index');
+    });
 
     Route::post('pagos/{pago}/pago-qr', [PagoQrController::class, 'store'])
         ->name('PagoQr.store');
