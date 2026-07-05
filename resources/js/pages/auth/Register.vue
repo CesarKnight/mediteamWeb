@@ -23,7 +23,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head title="Registro" />
 
     <Form
         v-bind="store.form()"
@@ -146,7 +146,7 @@ defineOptions({
                     :tabindex="8"
                     autocomplete="new-password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="Contraseña"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password" />
@@ -160,7 +160,7 @@ defineOptions({
                     :tabindex="9"
                     autocomplete="new-password"
                     name="password_confirmation"
-                    placeholder="Confirm password"
+                    placeholder="Confirmar contraseña"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password_confirmation" />
@@ -179,12 +179,12 @@ defineOptions({
         </div>
 
         <!-- <div class="text-center text-sm text-muted-foreground">
-            Already have an account?
+            ¿Ya tienes una cuenta?
             <TextLink
                 :href="login()"
                 class="underline underline-offset-4"
                 :tabindex="6"
-                >Log in</TextLink
+                >Iniciar sesión</TextLink
             >
         </div> -->
     </Form>

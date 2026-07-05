@@ -14,7 +14,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Citasindex, Historiasindex, Pagosindex, Secretariasindex, Serviciosindex } from '@/routes';
+import { Citasindex, Historiasindex, home, Pagosindex, Secretariasindex, Serviciosindex } from '@/routes';
 import type { NavItem } from '@/types';
 import { index as usuarioIndex} from '@/actions/App/Http/Controllers/UserController';
 import { index as pacienteIndex} from '@/actions/App/Http/Controllers/PacienteController';
@@ -24,7 +24,7 @@ import { index as dashboard } from '@/actions/App/Http/Controllers/DashboardCont
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Panel',
         href: dashboard(),
         icon: LayoutGrid,
     },
@@ -71,11 +71,7 @@ const mainNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Equipo Medico',
-        href: '#',
-        icon: Users2,
-    },
+    
 ];
 </script>
 
@@ -85,7 +81,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link :href="home()">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

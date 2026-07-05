@@ -20,7 +20,7 @@ import PagosPendientesList from '@/components/dashboard/pagosPendientesList.vue'
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'Dashboard', href: dashboardIndex() }],
+        breadcrumbs: [{ title: 'Panel', href: dashboardIndex() }],
     },
 });
 
@@ -62,13 +62,13 @@ const historiasPorEstadoItems = props.historiasPorEstado.map((h) => ({ ...h, ...
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Panel" />
 
     <div class="m-6 flex flex-col gap-6">
 
         <div>
             <h2 class="text-2xl font-semibold tracking-tight">
-                {{ userName ? `Hola, ${userName}` : 'Dashboard' }}
+                {{ userName ? `Hola, ${userName}` : 'Panel' }}
             </h2>
             <p class="text-sm text-muted-foreground">Resumen general de la clínica.</p>
         </div>
