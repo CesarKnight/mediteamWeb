@@ -9,6 +9,9 @@ import {
     destroy as destroyMedico,
 } from '@/actions/App/Http/Controllers/MedicoController';
 import MedicoTable from '@/components/medico/medicoTable.vue';
+import Button from '@/components/ui/button/Button.vue';
+import { SquarePlus } from '@lucide/vue';
+import { create as createUser } from '@/actions/App/Http/Controllers/UserController';
 
 defineOptions({
     layout: {
@@ -62,6 +65,13 @@ function executeDelete() {
                     {{ medicos.length }} médico{{ medicos.length !== 1 ? 's' : '' }} registrado{{ medicos.length !== 1 ? 's' : '' }}
                 </p>
             </div>
+
+            <Button as-child>
+                <Link :href="createUser()">
+                    <SquarePlus class="mr-2 h-4 w-4" />
+                    Añadir Médico
+                </Link>
+            </Button>
         </div>
 
         <Card>

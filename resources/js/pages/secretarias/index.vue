@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
-import { Pencil, Trash2 } from '@lucide/vue';
+import { Pencil, SquarePlus, Trash2 } from '@lucide/vue';
 import Card from '@/components/ui/card/Card.vue';
 import CardContent from '@/components/ui/card/CardContent.vue';
 import {
@@ -20,6 +20,7 @@ import {
     edit as editSecretaria,
     destroy as destroySecretaria,
 } from '@/actions/App/Http/Controllers/SecretariaController';
+import { create as createUser } from '@/actions/App/Http/Controllers/UserController';
 
 defineOptions({
     layout: {
@@ -73,6 +74,13 @@ function executeDelete() {
                     {{ secretarias.length }} secretaria{{ secretarias.length !== 1 ? 's' : '' }} registrada{{ secretarias.length !== 1 ? 's' : '' }}
                 </p>
             </div>
+
+            <Button as-child>
+                <Link :href="createUser()">
+                    <SquarePlus class="mr-2 h-4 w-4" />
+                    Añadir Secretaria
+                </Link>
+            </Button>
         </div>
 
         <Card>

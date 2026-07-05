@@ -115,8 +115,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('reportes')->name('Reportes')->group(function () {
         Route::get('index',                       [ReporteController::class, 'index'])->name('index');
         Route::get('historial-paciente',          [ReporteController::class, 'historialPaciente'])->name('historialPaciente');
+        Route::post('historial-paciente',         [ReporteController::class, 'generarHistorialPaciente'])->name('historialPaciente.generar');
         Route::get('historial-tratamientos',      [ReporteController::class, 'historialTratamientos'])->name('historialTratamientos');
+        Route::post('historial-tratamientos',     [ReporteController::class, 'generarHistorialTratamientos'])->name('historialTratamientos.generar');
         Route::get('historial-medico',            [ReporteController::class, 'historialMedico'])->name('historialMedico');
+        Route::post('historial-medico',           [ReporteController::class, 'generarHistorialMedico'])->name('historialMedico.generar');
         Route::get('historial-citas',             [ReporteController::class, 'historialCitas'])->name('historialCitas');
         Route::get('historial-pagos-paciente',    [ReporteController::class, 'historialPagosPaciente'])->name('historialPagosPaciente');
     });

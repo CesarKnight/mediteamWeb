@@ -20,9 +20,9 @@ class Paciente extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function Historia(): HasMany
+    public function historias(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Historia::class);
     }
 
     public function citas(): HasMany
