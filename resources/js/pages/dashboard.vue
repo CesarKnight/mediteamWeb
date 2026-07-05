@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
-    Calendar, DollarSign, Users, ClipboardList, Clock, Stethoscope, ArrowRight,
+    DollarSign, Users, ClipboardList, Clock, Stethoscope, ArrowRight,
+    Calendar,
 } from '@lucide/vue';
 import Card from '@/components/ui/card/Card.vue';
 import CardHeader from '@/components/ui/card/CardHeader.vue';

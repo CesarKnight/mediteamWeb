@@ -1,5 +1,6 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { initializeTheme } from '@/composables/useAppearance';
+import { initializeThemeCustomization } from '@/composables/useThemeCustomization';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
@@ -28,6 +29,9 @@ createInertiaApp({
 
 // This will set light / dark mode on page load...
 initializeTheme();
+
+// This will set the theme profile, font, size and contrast on page load...
+initializeThemeCustomization();
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();

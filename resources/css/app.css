@@ -7,12 +7,22 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
+/*
+  --font-sans lives in its own plain @theme block (not @theme inline) on
+  purpose: Tailwind v4 bakes literal `@theme inline` values straight into the
+  generated utility class (`.font-sans { font-family: Instrument Sans, ... }`),
+  which would make it impossible to override at runtime. A plain @theme block
+  instead generates `.font-sans { font-family: var(--font-sans) }`, so the
+  `data-font-family` overrides below actually take effect.
+*/
+@theme {
     --font-sans:
         Instrument Sans, ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+}
 
+@theme inline {
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
@@ -76,16 +86,6 @@
     ::backdrop,
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
-    }
-}
-
-@layer utilities {
-    body,
-    html {
-        --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-            'Noto Color Emoji';
     }
 }
 
@@ -169,4 +169,306 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/*
+  Theme customization: profiles (Niños / Jóvenes / Adultos / Personalizado),
+  font family, font size and high-contrast are all applied as independent
+  `data-*` attributes on <html> (see useThemeCustomization.ts). Adultos has
+  no dedicated block below since it matches the :root/.dark defaults above.
+*/
+
+/* ---- Font family ---- */
+html[data-font-family='modern'] {
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
+html[data-font-family='rounded'] {
+    --font-sans: 'Baloo 2', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+}
+
+html[data-font-family='classic'] {
+    --font-sans: 'Lora', Georgia, 'Times New Roman', serif;
+}
+
+/* ---- Font size ---- */
+html[data-font-size='small'] {
+    font-size: 90%;
+}
+
+html[data-font-size='medium'] {
+    font-size: 100%;
+}
+
+html[data-font-size='large'] {
+    font-size: 125%;
+}
+
+/* ---- Theme profile: Niños (big font, bold contrast, sidebar = primary) ---- */
+html[data-theme-profile='ninos'] {
+    --primary: hsl(206 90% 50%);
+    --primary-foreground: hsl(0 0% 100%);
+    --muted: hsl(206 60% 94%);
+    --muted-foreground: hsl(220 15% 35%);
+    --accent: hsl(45 95% 55%);
+    --accent-foreground: hsl(220 20% 12%);
+    --ring: hsl(206 90% 50%);
+    --sidebar-background: hsl(206 90% 50%);
+    --sidebar: hsl(206 90% 50%);
+    --sidebar-foreground: hsl(0 0% 100%);
+    --sidebar-primary: hsl(206 90% 50%);
+    --sidebar-primary-foreground: hsl(206 90% 40%);
+    --sidebar-accent: hsl(206 80% 42%);
+    --sidebar-accent-foreground: hsl(0 0% 100%);
+    --sidebar-border: hsl(206 80% 42%);
+    --sidebar-ring: hsl(0 0% 100%);
+}
+
+html.dark[data-theme-profile='ninos'] {
+    --background: hsl(220 25% 10%);
+    --foreground: hsl(0 0% 98%);
+    --primary: hsl(246, 90%, 60%);
+    --primary-foreground: hsl(220 25% 10%);
+    --muted: hsl(220 20% 16%);
+    --muted-foreground: hsl(210 15% 70%);
+    --accent: hsl(45 95% 60%);
+    --accent-foreground: hsl(220 20% 12%);
+    --ring: hsl(206 90% 60%);
+    --sidebar-background: hsl(206 80% 45%);
+    --sidebar: hsl(206 80% 45%);
+    --sidebar-foreground: hsl(0 0% 100%);
+    --sidebar-primary: hsl(0 0% 100%);
+    --sidebar-primary-foreground: hsl(206 80% 35%);
+    --sidebar-accent: hsl(206 70% 38%);
+    --sidebar-accent-foreground: hsl(0 0% 100%);
+    --sidebar-border: hsl(206 70% 35%);
+    --sidebar-ring: hsl(0 0% 100%);
+}
+
+/* ---- Theme profile: Jóvenes (small font, slight but present contrast) ---- */
+html[data-theme-profile='jovenes'] {
+    --primary: hsl(262 83% 58%);
+    --primary-foreground: hsl(0 0% 100%);
+    --muted: hsl(260 30% 96%);
+    --muted-foreground: hsl(260 10% 45%);
+    --accent: hsl(262 60% 94%);
+    --accent-foreground: hsl(260 15% 20%);
+    --ring: hsl(262 83% 58%);
+    --sidebar-background: hsl(260 40% 97%);
+    --sidebar: hsl(260 40% 97%);
+    --sidebar-foreground: hsl(260 15% 20%);
+    --sidebar-primary: hsl(262 83% 58%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(262 60% 92%);
+    --sidebar-accent-foreground: hsl(260 15% 20%);
+    --sidebar-border: hsl(260 30% 90%);
+    --sidebar-ring: hsl(262 83% 58%);
+}
+
+html.dark[data-theme-profile='jovenes'] {
+    --background: hsl(260 20% 8%);
+    --foreground: hsl(260 20% 92%);
+    --primary: hsl(262 85% 72%);
+    --primary-foreground: hsl(260 20% 10%);
+    --muted: hsl(260 18% 15%);
+    --muted-foreground: hsl(260 12% 65%);
+    --accent: hsl(262 30% 20%);
+    --accent-foreground: hsl(260 20% 92%);
+    --ring: hsl(262 85% 72%);
+    --sidebar-background: hsl(260 22% 10%);
+    --sidebar: hsl(260 22% 10%);
+    --sidebar-foreground: hsl(260 20% 90%);
+    --sidebar-primary: hsl(262 85% 72%);
+    --sidebar-primary-foreground: hsl(260 20% 10%);
+    --sidebar-accent: hsl(262 30% 22%);
+    --sidebar-accent-foreground: hsl(260 20% 90%);
+    --sidebar-border: hsl(260 18% 18%);
+    --sidebar-ring: hsl(262 85% 72%);
+}
+
+/*
+  ---- Personalizado color swatches ----
+  Only branding colors (primary/ring/sidebar accent) change here; background,
+  muted and borders stay neutral so any swatch stays readable in both modes.
+*/
+html[data-theme-profile='personalizado'][data-color-scheme='teal'] {
+    --primary: hsl(187 100% 26%);
+    --primary-foreground: hsl(224 91% 91%);
+    --ring: hsl(187 100% 26%);
+    --sidebar-primary: hsl(187 100% 26%);
+    --sidebar-primary-foreground: hsl(224 91% 91%);
+    --sidebar-ring: hsl(187 100% 26%);
+}
+
+html.dark[data-theme-profile='personalizado'][data-color-scheme='teal'] {
+    --primary: hsl(219 100% 86%);
+    --primary-foreground: hsl(0 0% 9%);
+    --ring: hsl(219 100% 86%);
+    --sidebar-primary: hsl(219 100% 86%);
+    --sidebar-primary-foreground: hsl(0 0% 9%);
+    --sidebar-ring: hsl(219 100% 86%);
+}
+
+html[data-theme-profile='personalizado'][data-color-scheme='indigo'] {
+    --primary: hsl(243 75% 59%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(243 75% 59%);
+    --sidebar-primary: hsl(243 75% 59%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(243 75% 59%);
+}
+
+html.dark[data-theme-profile='personalizado'][data-color-scheme='indigo'] {
+    --primary: hsl(243 90% 78%);
+    --primary-foreground: hsl(243 30% 12%);
+    --ring: hsl(243 90% 78%);
+    --sidebar-primary: hsl(243 90% 78%);
+    --sidebar-primary-foreground: hsl(243 30% 12%);
+    --sidebar-ring: hsl(243 90% 78%);
+}
+
+html[data-theme-profile='personalizado'][data-color-scheme='rose'] {
+    --primary: hsl(347 77% 50%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(347 77% 50%);
+    --sidebar-primary: hsl(347 77% 50%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(347 77% 50%);
+}
+
+html.dark[data-theme-profile='personalizado'][data-color-scheme='rose'] {
+    --primary: hsl(347 90% 75%);
+    --primary-foreground: hsl(347 30% 12%);
+    --ring: hsl(347 90% 75%);
+    --sidebar-primary: hsl(347 90% 75%);
+    --sidebar-primary-foreground: hsl(347 30% 12%);
+    --sidebar-ring: hsl(347 90% 75%);
+}
+
+html[data-theme-profile='personalizado'][data-color-scheme='amber'] {
+    --primary: hsl(38 92% 42%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(38 92% 42%);
+    --sidebar-primary: hsl(38 92% 42%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(38 92% 42%);
+}
+
+html.dark[data-theme-profile='personalizado'][data-color-scheme='amber'] {
+    --primary: hsl(38 95% 68%);
+    --primary-foreground: hsl(38 40% 12%);
+    --ring: hsl(38 95% 68%);
+    --sidebar-primary: hsl(38 95% 68%);
+    --sidebar-primary-foreground: hsl(38 40% 12%);
+    --sidebar-ring: hsl(38 95% 68%);
+}
+
+html[data-theme-profile='personalizado'][data-color-scheme='emerald'] {
+    --primary: hsl(152 69% 31%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(152 69% 31%);
+    --sidebar-primary: hsl(152 69% 31%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(152 69% 31%);
+}
+
+html.dark[data-theme-profile='personalizado'][data-color-scheme='emerald'] {
+    --primary: hsl(152 60% 65%);
+    --primary-foreground: hsl(152 40% 10%);
+    --ring: hsl(152 60% 65%);
+    --sidebar-primary: hsl(152 60% 65%);
+    --sidebar-primary-foreground: hsl(152 40% 10%);
+    --sidebar-ring: hsl(152 60% 65%);
+}
+
+html[data-theme-profile='personalizado'][data-color-scheme='slate'] {
+    --primary: hsl(215 25% 27%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(215 25% 27%);
+    --sidebar-primary: hsl(215 25% 27%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(215 25% 27%);
+}
+
+html.dark[data-theme-profile='personalizado'][data-color-scheme='slate'] {
+    --primary: hsl(215 20% 75%);
+    --primary-foreground: hsl(215 30% 12%);
+    --ring: hsl(215 20% 75%);
+    --sidebar-primary: hsl(215 20% 75%);
+    --sidebar-primary-foreground: hsl(215 30% 12%);
+    --sidebar-ring: hsl(215 20% 75%);
+}
+
+/*
+  ---- High contrast (independent accessibility overlay) ----
+  Wireframe-style: strips every theme profile / color scheme down to a strict
+  black-on-white (or white-on-black) palette with solid borders, so it always
+  wins regardless of which profile or color scheme is active. The selector
+  repeats `[data-theme-profile]`/`[data-color-scheme]` purely to out-rank the
+  profile and color-scheme rules above when specificity ties; it matches on
+  presence only, so it applies no matter which value they hold.
+*/
+html[data-theme-profile][data-color-scheme][data-contrast='high'] {
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(0 0% 0%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(0 0% 0%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(0 0% 0%);
+    --primary: hsl(0 0% 0%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(0 0% 100%);
+    --secondary-foreground: hsl(0 0% 0%);
+    --muted: hsl(0 0% 92%);
+    --muted-foreground: hsl(0 0% 10%);
+    --accent: hsl(0 0% 90%);
+    --accent-foreground: hsl(0 0% 0%);
+    --destructive: hsl(0 100% 35%);
+    --destructive-foreground: hsl(0 0% 100%);
+    --border: hsl(0 0% 0%);
+    --input: hsl(0 0% 0%);
+    --ring: hsl(0 0% 0%);
+    --sidebar-background: hsl(0 0% 100%);
+    --sidebar: hsl(0 0% 100%);
+    --sidebar-foreground: hsl(0 0% 0%);
+    --sidebar-primary: hsl(0 0% 0%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(0 0% 90%);
+    --sidebar-accent-foreground: hsl(0 0% 0%);
+    --sidebar-border: hsl(0 0% 0%);
+    --sidebar-ring: hsl(0 0% 0%);
+}
+
+html.dark[data-theme-profile][data-color-scheme][data-contrast='high'] {
+    --background: hsl(0 0% 0%);
+    --foreground: hsl(0 0% 100%);
+    --card: hsl(0 0% 0%);
+    --card-foreground: hsl(0 0% 100%);
+    --popover: hsl(0 0% 0%);
+    --popover-foreground: hsl(0 0% 100%);
+    --primary: hsl(0 0% 100%);
+    --primary-foreground: hsl(0 0% 0%);
+    --secondary: hsl(0 0% 0%);
+    --secondary-foreground: hsl(0 0% 100%);
+    --muted: hsl(0 0% 12%);
+    --muted-foreground: hsl(0 0% 92%);
+    --accent: hsl(0 0% 15%);
+    --accent-foreground: hsl(0 0% 100%);
+    --destructive: hsl(0 100% 65%);
+    --destructive-foreground: hsl(0 0% 0%);
+    --border: hsl(0 0% 100%);
+    --input: hsl(0 0% 100%);
+    --ring: hsl(0 0% 100%);
+    --sidebar-background: hsl(0 0% 0%);
+    --sidebar: hsl(0 0% 0%);
+    --sidebar-foreground: hsl(0 0% 100%);
+    --sidebar-primary: hsl(0 0% 100%);
+    --sidebar-primary-foreground: hsl(0 0% 0%);
+    --sidebar-accent: hsl(0 0% 15%);
+    --sidebar-accent-foreground: hsl(0 0% 100%);
+    --sidebar-border: hsl(0 0% 100%);
+    --sidebar-ring: hsl(0 0% 100%);
 }

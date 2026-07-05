@@ -3,7 +3,7 @@ import Card from '@/components/ui/card/Card.vue';
 import CardContent from '@/components/ui/card/CardContent.vue';
 
 defineProps<{
-    icon: object;
+    icon: Function;
     label: string;
     value: string;
     accentClass?: string;

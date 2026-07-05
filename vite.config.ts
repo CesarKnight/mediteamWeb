@@ -16,6 +16,12 @@ export default defineConfig({
                 bunny('Instrument Sans', {
                     weights: [400, 500, 600],
                 }),
+                bunny('Baloo 2', {
+                    weights: [400, 600, 700],
+                }),
+                bunny('Lora', {
+                    weights: [400, 500, 600],
+                }),
             ],
         }),
         inertia(),
