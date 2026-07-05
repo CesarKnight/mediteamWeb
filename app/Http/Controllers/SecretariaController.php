@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Concerns\ProfileValidationRules;
 use App\Models\Secretaria;
+use App\Services\BitacoraService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
@@ -14,6 +16,8 @@ use Inertia\Response;
 class SecretariaController extends Controller
 {
     use ProfileValidationRules;
+
+    public function __construct(private readonly BitacoraService $bitacora) {}
 
     public function index(): Response
     {
@@ -89,6 +93,11 @@ class SecretariaController extends Controller
 
         $secretaria->update($validated);
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó la profesión de la secretaria {$secretaria->user->name} {$secretaria->user->lastName} (id {$secretaria->id}) a '{$validated['profesion']}'.",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profesión actualizada exitosamente.')]);
 
         return to_route('Secretariasindex');
@@ -103,7 +112,15 @@ class SecretariaController extends Controller
                 ->withErrors(['error' => 'No puedes eliminar tu propia cuenta.']);
         }
 
+        $nombreCompleto = trim("{$secretaria->user->name} {$secretaria->user->lastName}");
+        $secretariaId = $secretaria->id;
+
         $secretaria->user->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó a la secretaria {$nombreCompleto} (id {$secretariaId}).",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Secretaria eliminada exitosamente.')]);
 

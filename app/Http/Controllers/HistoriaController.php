@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Historia;
 use App\Models\Medico;
 use App\Models\Paciente;
+use App\Services\BitacoraService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
 
 class HistoriaController extends Controller
 {
+    public function __construct(private readonly BitacoraService $bitacora) {}
+
     private function formatHistoria(Historia $h): array
     {
         return [
@@ -137,6 +141,11 @@ class HistoriaController extends Controller
             $historia->medicosInvolucrados()->attach($validated['medicos_involucrados']);
         }
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " creó la historia clínica #{$historia->id} para el paciente con id {$validated['paciente_id']}.",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Historia clínica creada exitosamente.')]);
 
         return to_route('Historiasindex');
@@ -163,6 +172,11 @@ class HistoriaController extends Controller
         // sync() replaces all pivot rows with the new set in one call
         $historia->medicosInvolucrados()->sync($validated['medicos_involucrados'] ?? []);
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó la historia clínica #{$historia->id}.",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Historia clínica actualizada exitosamente.')]);
 
         return to_route('Historiasindex');
@@ -170,7 +184,14 @@ class HistoriaController extends Controller
 
     public function destroy(Request $request, Historia $historia)
     {
+        $historiaId = $historia->id;
+
         $historia->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó la historia clínica #{$historiaId}.",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Historia eliminada exitosamente.')]);
 

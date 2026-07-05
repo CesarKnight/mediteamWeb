@@ -5,14 +5,18 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
+use App\Services\BitacoraService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
+use Illuminate\Support\Facades\Auth;
 
 class SecurityController extends Controller
 {
+    public function __construct(private readonly BitacoraService $bitacora) {}
+
     /**
      * Show the user's security settings page.
      */
@@ -58,6 +62,11 @@ class SecurityController extends Controller
         $request->user()->update([
             'password' => $request->password,
         ]);
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó su contraseña.",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Password updated.')]);
 

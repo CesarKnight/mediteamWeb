@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pago;
+use App\Services\BitacoraService;
 use App\Services\PagoFacilService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class PagoQrController extends Controller
 {
-    public function __construct(private PagoFacilService $pagoFacil) {}
+    public function __construct(
+        private PagoFacilService $pagoFacil,
+        private BitacoraService $bitacora,
+    ) {}
 
     public function store(Pago $pago): RedirectResponse
     {
@@ -35,6 +40,11 @@ class PagoQrController extends Controller
                 'qr_base64'          => $values['qrBase64'] ?? null,
                 'expiracion'         => $values['expirationDate'] ?? null,
             ]);
+
+            $this->bitacora->registrar(
+                "Usuario con id " . Auth::id() . " generó un código QR de pago para el pago #{$pago->id}.",
+                static::class,
+            );
 
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Código QR generado exitosamente.')]);
         } catch (\Throwable $e) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Services\BitacoraService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    public function __construct(private readonly BitacoraService $bitacora) {}
+
     /**
      * Show the user's profile settings page.
      */
@@ -38,6 +41,11 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó su perfil.",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
 
         return to_route('profile.edit');
@@ -49,6 +57,11 @@ class ProfileController extends Controller
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
         $user = $request->user();
+
+        $this->bitacora->registrar(
+            "Usuario con id {$user->id} eliminó su propia cuenta.",
+            static::class,
+        );
 
         Auth::logout();
 

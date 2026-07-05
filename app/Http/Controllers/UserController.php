@@ -13,13 +13,15 @@ use Illuminate\Support\Facades\Validator;
 use App\Concerns\ProfileValidationRules;
 use App\Enums\PacienteEstado;
 use App\Enums\UsuarioTipo;
-use App\Models\Paciente;
-use Illuminate\Support\Facades\Password;
+use App\Services\BitacoraService;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     use ProfileValidationRules, PasswordValidationRules;
-    
+
+    public function __construct(private readonly BitacoraService $bitacora) {}
+
     public function index(Request $request): Response{
         $usuarios = User::all();
         
@@ -57,6 +59,11 @@ class UserController extends Controller
             ]);
         }
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " creó al usuario {$usuario->name} {$usuario->lastName} (id {$usuario->id}, tipo {$usuario->tipo->value}).",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Usuario creado Exitosamente.')]);
 
         return to_route('Usuariosindex');
@@ -79,13 +86,21 @@ class UserController extends Controller
 
         $user->update(collect($validated)->except(['password', 'password_confirmation'])->all());
 
+        $passwordChanged = false;
         if ($request->filled('password')) {
             $validated = Validator::make($request->all(), [
                 'password' => $this->passwordRules(),
             ])->validate();
 
             $user->update(['password' => $request->password]);
+            $passwordChanged = true;
         }
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó al usuario {$user->name} {$user->lastName} (id {$user->id})."
+                . ($passwordChanged ? ' Contraseña actualizada.' : ''),
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Usuario actualizado Exitosamente.')]);
 
@@ -101,7 +116,16 @@ class UserController extends Controller
                 ->withErrors(['error' => 'No puedes eliminar tu propia cuenta.']);
         }
 
+        $nombreCompleto = trim("{$user->name} {$user->lastName}");
+        $userId = $user->id;
+
         $user->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó al usuario {$nombreCompleto} (id {$userId}).",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Usuario eliminado Exitosamente.')]);
         return redirect()->back();
     }

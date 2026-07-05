@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Pago;
 use App\Models\Paciente;
 use App\Models\Servicio;
+use App\Services\BitacoraService;
 use App\Services\PagoFacilService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -15,8 +17,11 @@ use Inertia\Response;
 
 class PagoController extends Controller
 {
-    public function __construct(private PagoFacilService $pagoFacil) {}
-    
+    public function __construct(
+        private PagoFacilService $pagoFacil,
+        private BitacoraService $bitacora,
+    ) {}
+
     private function formatPago(Pago $p): array
     {
         return [
@@ -84,6 +89,11 @@ class PagoController extends Controller
 
         $pago = Pago::create($validated);
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " registró el pago #{$pago->id} de {$pago->total} para el paciente con id {$validated['paciente_id']} (método {$pago->metodo}).",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Pago registrado exitosamente.')]);
 
         return to_route('Pagosshow', $pago);
@@ -105,9 +115,19 @@ class PagoController extends Controller
                 if ($paymentStatus === 2) {
                     $pagoQr->update(['estado' => 'exitoso']);
                     $pago->update(['estado' => 'pagado']);
+
+                    $this->bitacora->registrar(
+                        "Usuario con id " . Auth::id() . " confirmó el pago #{$pago->id} como pagado vía QR.",
+                        static::class,
+                    );
                 } elseif ($paymentStatus === 4) {
                     $pagoQr->update(['estado' => 'anulado']);
                     $pago->update(['estado' => 'anulado']);
+
+                    $this->bitacora->registrar(
+                        "Usuario con id " . Auth::id() . " anuló el pago #{$pago->id} vía QR.",
+                        static::class,
+                    );
                 }
                 // paymentStatus === 1 ("En Proceso") -> still pending, no change
             } catch (\Throwable $e) {
@@ -137,7 +157,15 @@ class PagoController extends Controller
 
     public function destroy(Pago $pago): RedirectResponse
     {
+        $pagoId = $pago->id;
+        $total = $pago->total;
+
         $pago->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó el pago #{$pagoId} (total {$total}).",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Pago eliminado exitosamente.')]);
 

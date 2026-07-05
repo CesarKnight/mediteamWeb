@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Enums\PacienteEstado;
 use App\Models\Paciente;
+use App\Services\BitacoraService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class PacienteController extends Controller
 {
+    public function __construct(private readonly BitacoraService $bitacora) {}
+
     public function index()
     {
         $pacientes = Paciente::with('user')
@@ -82,6 +86,11 @@ class PacienteController extends Controller
 
         $paciente->update(['estado' => $validated['estado']]);
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó el estado del paciente {$paciente->user->name} {$paciente->user->lastName} (id {$paciente->id}) a '{$validated['estado']}'.",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Estado actualizado exitosamente.')]);
 
         return to_route('Pacientesindex');
@@ -98,8 +107,16 @@ class PacienteController extends Controller
                 ->withErrors(['error' => 'No puedes eliminar tu propia cuenta.']);
         }
 
+        $nombreCompleto = trim("{$paciente->user->name} {$paciente->user->lastName}");
+        $pacienteId = $paciente->id;
+
         // Deleting the user cascades to paciente via the migration constraint
         $paciente->user->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó al paciente {$nombreCompleto} (id {$pacienteId}).",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Paciente eliminado exitosamente.')]);
 

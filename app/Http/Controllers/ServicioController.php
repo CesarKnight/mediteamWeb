@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Servicio;
+use App\Services\BitacoraService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ServicioController extends Controller
 {
+    public function __construct(private readonly BitacoraService $bitacora) {}
+
     private function formatServicio(Servicio $s): array
     {
         return [
@@ -47,7 +51,12 @@ class ServicioController extends Controller
             'estado'      => ['required', 'string', 'in:disponible,no'],
         ])->validate();
 
-        Servicio::create($validated);
+        $servicio = Servicio::create($validated);
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " creó el servicio '{$servicio->titulo}' (id {$servicio->id}).",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Servicio creado exitosamente.')]);
 
@@ -73,6 +82,11 @@ class ServicioController extends Controller
 
         $servicio->update($validated);
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó el servicio '{$servicio->titulo}' (id {$servicio->id}).",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Servicio actualizado exitosamente.')]);
 
         return to_route('Serviciosindex');
@@ -80,7 +94,15 @@ class ServicioController extends Controller
 
     public function destroy(Servicio $servicio): RedirectResponse
     {
+        $titulo = $servicio->titulo;
+        $servicioId = $servicio->id;
+
         $servicio->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó el servicio '{$titulo}' (id {$servicioId}).",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Servicio eliminado exitosamente.')]);
 

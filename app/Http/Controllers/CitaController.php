@@ -6,14 +6,18 @@ use App\Models\Cita;
 use App\Models\Medico;
 use App\Models\Paciente;
 use App\Models\Servicio;
+use App\Services\BitacoraService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
 
 class CitaController extends Controller
 {
+    public function __construct(private readonly BitacoraService $bitacora) {}
+
     private function formatCita(Cita $c): array
     {
         return [
@@ -109,7 +113,12 @@ class CitaController extends Controller
 
         $validated = $validator->validate();
 
-        Cita::create($validated);
+        $cita = Cita::create($validated);
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " agendó la cita #{$cita->id} para el paciente con id {$validated['paciente_id']} con el médico con id {$validated['medico_id']}.",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Cita agendada exitosamente.')]);
 
@@ -124,6 +133,11 @@ class CitaController extends Controller
 
         $cita->update($validated);
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó el estado de la cita #{$cita->id} a '{$validated['estado']}'.",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Estado de la cita actualizado.')]);
 
         return to_route('Citasindex');
@@ -131,7 +145,14 @@ class CitaController extends Controller
 
     public function destroy(Cita $cita): RedirectResponse
     {
+        $citaId = $cita->id;
+
         $cita->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó la cita #{$citaId}.",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Cita eliminada exitosamente.')]);
 

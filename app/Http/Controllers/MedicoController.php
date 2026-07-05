@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Concerns\ProfileValidationRules;
 use App\Models\Medico;
+use App\Services\BitacoraService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
 
 class MedicoController extends Controller
 {
     use ProfileValidationRules;
+
+    public function __construct(private readonly BitacoraService $bitacora) {}
 
     public function index(): Response
     {
@@ -91,6 +95,11 @@ class MedicoController extends Controller
 
         $medico->update(['especialidad' => $validated['especialidad']]);
 
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " actualizó la especialidad del médico {$medico->user->name} {$medico->user->lastName} (id {$medico->id}) a '{$validated['especialidad']}'.",
+            static::class,
+        );
+
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Especialidad actualizada exitosamente.')]);
 
         return to_route('Medicosindex');
@@ -105,7 +114,15 @@ class MedicoController extends Controller
                 ->withErrors(['error' => 'No puedes eliminar tu propia cuenta.']);
         }
 
+        $nombreCompleto = trim("{$medico->user->name} {$medico->user->lastName}");
+        $medicoId = $medico->id;
+
         $medico->user->delete();
+
+        $this->bitacora->registrar(
+            "Usuario con id " . Auth::id() . " eliminó al médico {$nombreCompleto} (id {$medicoId}).",
+            static::class,
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Médico eliminado exitosamente.')]);
 
