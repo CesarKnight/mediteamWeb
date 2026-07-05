@@ -121,7 +121,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('historial-medico',            [ReporteController::class, 'historialMedico'])->name('historialMedico');
         Route::post('historial-medico',           [ReporteController::class, 'generarHistorialMedico'])->name('historialMedico.generar');
         Route::get('historial-citas',             [ReporteController::class, 'historialCitas'])->name('historialCitas');
+        Route::post('historial-citas',            [ReporteController::class, 'generarHistorialCitas'])->name('historialCitas.generar');
         Route::get('historial-pagos-paciente',    [ReporteController::class, 'historialPagosPaciente'])->name('historialPagosPaciente');
+        Route::post('historial-pagos-paciente',   [ReporteController::class, 'generarHistorialPagosPaciente'])->name('historialPagosPaciente.generar');
     });
 
     Route::prefix('bitacora')->name('Bitacora')->group(function () {

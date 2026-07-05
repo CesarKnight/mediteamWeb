@@ -161,7 +161,7 @@ function confirmPending() {
             No hay citas para mostrar.
         </p>
 
-        <Card v-for="group in groupedByDate" :key="group.date.toISOString()" class="w-full lg:w-1/2">
+        <Card v-for="group in groupedByDate" :key="group.date.toISOString()" class="w-full lg:3/4 xl:w-1/2">
             <CardHeader class="pb-2">
                 <CardTitle class="text-base">{{ formatDayLabel(group.date) }}</CardTitle>
             </CardHeader>

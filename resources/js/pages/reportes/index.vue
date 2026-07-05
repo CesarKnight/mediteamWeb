@@ -107,7 +107,7 @@ const categorias: Categoria[] = [
                 {{ categoria.title }}
             </div>
 
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-3 sm:grid-cols-2">
                 <Link
                     v-for="reporte in categoria.reportes"
                     :key="reporte.title"

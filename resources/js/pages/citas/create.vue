@@ -90,7 +90,7 @@ const selectedServicio = computed(() =>
                             <InputError :message="errors.servicio_id" />
                         </div>
 
-                        <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="grid gap-4 xl:grid-cols-2">
                             <div class="grid gap-2">
                                 <Label for="hora_inicio">Inicio</Label>
                                 <input id="hora_inicio" name="hora_inicio" type="datetime-local" required

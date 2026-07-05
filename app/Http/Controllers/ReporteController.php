@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cita;
 use App\Models\Historia;
 use App\Models\Medico;
 use App\Models\Paciente;
+use App\Models\Pago;
 use App\Models\Tratamiento;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -300,11 +302,143 @@ class ReporteController extends Controller
 
     public function historialCitas(): Response
     {
-        return Inertia::render('reportes/historial-citas');
+        return Inertia::render('reportes/historial-citas', [
+            'medicos' => $this->medicosParaSelector(),
+        ]);
+    }
+
+    public function generarHistorialCitas(Request $request): Response
+    {
+        $validated = Validator::make($request->all(), [
+            'medico_id'    => ['required', 'exists:medicos,id'],
+            'fecha_inicio' => ['nullable', 'date'],
+            'fecha_fin'    => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
+        ])->validate();
+
+        $medico = Medico::with('user')->findOrFail($validated['medico_id']);
+
+        $citas = Cita::where('medico_id', $medico->id)
+            ->when($validated['fecha_inicio'] ?? null, fn ($q, $fecha) => $q->whereDate('hora_inicio', '>=', $fecha))
+            ->when($validated['fecha_fin'] ?? null, fn ($q, $fecha) => $q->whereDate('hora_inicio', '<=', $fecha))
+            ->with(['paciente.user', 'servicio'])
+            ->orderBy('hora_inicio')
+            ->get()
+            ->map(fn (Cita $c) => [
+                'id'          => $c->id,
+                'estado'      => $c->estado,
+                'horaInicio'  => $c->hora_inicio,
+                'horaFin'     => $c->hora_fin,
+                'paciente'    => [
+                    'name'     => $c->paciente->user->name,
+                    'lastName' => $c->paciente->user->lastName,
+                    'ci'       => $c->paciente->user->ci,
+                ],
+                'servicio'    => [
+                    'titulo'    => $c->servicio->titulo,
+                    'precio'    => $c->servicio->precio,
+                    'duracion'  => $c->servicio->duracion,
+                ],
+            ]);
+
+        $data = [
+            'medico'      => [
+                'name'         => $medico->user->name,
+                'lastName'     => $medico->user->lastName,
+                'ci'           => $medico->user->ci,
+                'telefono'     => $medico->user->telefono,
+                'especialidad' => $medico->especialidad,
+            ],
+            'citas'       => $citas,
+            'fechaInicio' => $validated['fecha_inicio'] ?? null,
+            'fechaFin'    => $validated['fecha_fin'] ?? null,
+            'generadoEn'  => now(),
+        ];
+
+        $pdf = Pdf::loadView('reportes.historial-citas-pdf', $data)->setPaper('letter');
+
+        return Inertia::render('reportes/historial-citas', [
+            'medicos'   => $this->medicosParaSelector(),
+            'filtros'   => [
+                'medico_id'    => $medico->id,
+                'fecha_inicio' => $validated['fecha_inicio'] ?? null,
+                'fecha_fin'    => $validated['fecha_fin'] ?? null,
+            ],
+            'pdfBase64' => base64_encode($pdf->output()),
+            'resumen'   => [
+                'medico'          => trim($medico->user->name.' '.$medico->user->lastName),
+                'totalCitas'      => $citas->count(),
+                'pacientesUnicos' => $citas->pluck('paciente.ci')->unique()->count(),
+                'serviciosUnicos' => $citas->pluck('servicio.titulo')->unique()->count(),
+            ],
+        ]);
     }
 
     public function historialPagosPaciente(): Response
     {
-        return Inertia::render('reportes/historial-pagos-paciente');
+        return Inertia::render('reportes/historial-pagos-paciente', [
+            'pacientes' => $this->pacientesParaSelector(),
+        ]);
+    }
+
+    public function generarHistorialPagosPaciente(Request $request): Response
+    {
+        $validated = Validator::make($request->all(), [
+            'paciente_id'  => ['required', 'exists:pacientes,id'],
+            'fecha_inicio' => ['nullable', 'date'],
+            'fecha_fin'    => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
+        ])->validate();
+
+        $paciente = Paciente::with('user')->findOrFail($validated['paciente_id']);
+
+        $pagos = Pago::where('paciente_id', $paciente->id)
+            ->when($validated['fecha_inicio'] ?? null, fn ($q, $fecha) => $q->whereDate('created_at', '>=', $fecha))
+            ->when($validated['fecha_fin'] ?? null, fn ($q, $fecha) => $q->whereDate('created_at', '<=', $fecha))
+            ->with('servicio')
+            ->orderBy('created_at')
+            ->get()
+            ->map(fn (Pago $p) => [
+                'id'         => $p->id,
+                'total'      => $p->total,
+                'estado'     => $p->estado,
+                'metodo'     => $p->metodo,
+                'created_at' => $p->created_at,
+                'servicio'   => [
+                    'titulo' => $p->servicio->titulo,
+                    'precio' => $p->servicio->precio,
+                ],
+            ]);
+
+        $data = [
+            'paciente'    => [
+                'name'            => $paciente->user->name,
+                'lastName'        => $paciente->user->lastName,
+                'ci'              => $paciente->user->ci,
+                'fechaNacimiento' => $paciente->user->fechaNacimiento,
+                'telefono'        => $paciente->user->telefono,
+                'estado'          => $paciente->estado,
+            ],
+            'pagos'       => $pagos,
+            'fechaInicio' => $validated['fecha_inicio'] ?? null,
+            'fechaFin'    => $validated['fecha_fin'] ?? null,
+            'generadoEn'  => now(),
+        ];
+
+        $pdf = Pdf::loadView('reportes.historial-pagos-paciente-pdf', $data)->setPaper('letter');
+
+        return Inertia::render('reportes/historial-pagos-paciente', [
+            'pacientes' => $this->pacientesParaSelector(),
+            'filtros'   => [
+                'paciente_id'  => $paciente->id,
+                'fecha_inicio' => $validated['fecha_inicio'] ?? null,
+                'fecha_fin'    => $validated['fecha_fin'] ?? null,
+            ],
+            'pdfBase64' => base64_encode($pdf->output()),
+            'resumen'   => [
+                'paciente'      => trim($paciente->user->name.' '.$paciente->user->lastName),
+                'totalPagos'    => $pagos->count(),
+                'totalPagado'   => $pagos->where('estado', 'pagado')->sum('total'),
+                'totalPendiente' => $pagos->where('estado', 'pendiente')->sum('total'),
+            ],
+        ]);
     }
 }
