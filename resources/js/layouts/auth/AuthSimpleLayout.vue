@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import PageFooter from '@/components/PageFooter.vue';
 import { home } from '@/routes';
 
 defineProps<{
@@ -39,5 +40,6 @@ defineProps<{
                 <slot />
             </div>
         </div>
+        <PageFooter />
     </div>
 </template>

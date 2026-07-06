@@ -2,11 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\VisitaService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private readonly VisitaService $visitas) {}
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -43,6 +46,23 @@ class HandleInertiaRequests extends Middleware
                 'permisos' => $request->user()?->rol?->permisos->pluck('nombre') ?? [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'visitasPagina' => $this->visitasDeEstaPagina($request),
         ];
+    }
+
+    /**
+     * Counts this hit and returns the page's up-to-date total, for display
+     * in a per-page footer. Only named GET/HEAD routes count as "a page" —
+     * form submissions (POST/PUT/PATCH/DELETE) and unnamed routes don't.
+     */
+    private function visitasDeEstaPagina(Request $request): ?int
+    {
+        if (! $request->isMethod('get')) {
+            return null;
+        }
+
+        $ruta = $request->route()?->getName();
+
+        return $ruta === null ? null : $this->visitas->registrarYContar($ruta);
     }
 }

@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
             CitaSeeder::class,
             PagoSeeder::class,
             PagoQrSeeder::class,
+            VisitaSeeder::class,
         ]);
     }
 }

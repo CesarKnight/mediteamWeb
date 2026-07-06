@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { Citasindex, dashboard, login, register } from '@/routes';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +22,8 @@ import {
     Stethoscope,
     Syringe,
 } from '@lucide/vue';
+
+const visitas = computed(() => usePage().props.visitasPagina);
 
 const servicios = [
     {
@@ -310,6 +313,9 @@ const doctores = [
                 </div>
                 <p>© {{ new Date().getFullYear() }} Clínica Mediteam. Todos los derechos reservados.</p>
             </div>
+            <p v-if="visitas !== null" class="mt-4 text-center text-xs text-muted-foreground">
+                Esta página ha sido visitada {{ visitas }} {{ visitas === 1 ? 'vez' : 'veces' }}.
+            </p>
         </footer>
     </div>
 </template>
