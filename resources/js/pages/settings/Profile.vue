@@ -63,6 +63,7 @@ const user = computed(() => page.props.auth.user);
                 <Input
                     id="lastName"
                     type="text"
+                    name="lastName"
                     required
                     :tabindex="2"
                     :default-value="user.lastName"
@@ -78,6 +79,7 @@ const user = computed(() => page.props.auth.user);
                 <Input
                     id="ci"
                     type="text"
+                    name="ci"
                     required
                     :tabindex="3"
                     :default-value="user.ci"
@@ -92,6 +94,7 @@ const user = computed(() => page.props.auth.user);
                 <Input
                     id="fechaNacimiento"
                     type="date"
+                    name="fechaNacimiento"
                     required
                     :tabindex="4"
                     :default-value="user.fechaNacimiento"
@@ -106,6 +109,7 @@ const user = computed(() => page.props.auth.user);
                 <Input
                     id="telefono"
                     type="text"
+                    name="telefono"
                     :tabindex="5"
                     :default-value="user.telefono"
                     class="mt-1 block w-full"
@@ -113,33 +117,29 @@ const user = computed(() => page.props.auth.user);
                 />
                 <InputError :message="errors.telefono" />
             </div>
-
-
-            <div class="grid gap-2">
-                <Label for="tipo">Rol de usuario</Label>
-                <select
-                    id="tipo"
-                    name="tipo"
-                    :tabindex="6"
-                    :default-value="user.tipo"
-                    disabled
-                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    <option value="paciente">
-                        Paciente
-                    </option>
-                    <option value="medico">
-                        Medico
-                    </option>
-                    <option value="secretaria">
-                        Secretaria
-                    </option>
-                    <option value="administrador">
-                        Administrador
-                    </option>
-                </select>
-                <InputError :message="errors.tipo" />
-            </div>
+            
+                
+            <select
+                id="tipo"
+                name="tipo"
+                :tabindex="6"
+                hidden
+                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            >
+                <option value="paciente" :selected="user.tipo === 'paciente'">
+                    Paciente
+                </option>
+                <option value="medico" :selected="user.tipo === 'medico'">
+                    Medico
+                </option>
+                <option value="secretaria" :selected="user.tipo === 'secretaria'">
+                    Secretaria
+                </option>
+                <option value="administrador" :selected="user.tipo === 'administrador'">
+                    Administrador
+                </option>
+            </select>
+                
 
             <div class="grid gap-2">
                 <Label for="email">Correo Electronico</Label>

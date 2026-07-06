@@ -75,7 +75,7 @@ const historiasPorEstadoItems = props.historiasPorEstado.map((h) => ({ ...h, ...
         </div>
 
         <!-- KPIs -->
-        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div class="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
             <KpiCard :icon="Calendar" label="Citas hoy" :value="String(kpis.citasHoy)"
                 accent-class="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300" />
             <KpiCard :icon="DollarSign" label="Ingresos del mes" :value="`${kpis.ingresosMes.toFixed(2)} Bs.`"
