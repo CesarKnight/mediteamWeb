@@ -15,6 +15,7 @@ use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PagoFacilCallbackController;
 use App\Http\Controllers\PagoQrController;
+use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\ReporteController;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
@@ -128,6 +129,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('bitacora')->name('Bitacora')->group(function () {
         Route::get('index',         [BitacoraController::class, 'index'])->name('index');
+    });
+
+    Route::prefix('permisos')->name('Permisos')->group(function () {
+        Route::get('index',              [PermisoController::class, 'index'])->name('index');
+        Route::patch('{rol}/toggle',    [PermisoController::class, 'toggle'])->name('toggle');
     });
 
     Route::post('pagos/{pago}/pago-qr', [PagoQrController::class, 'store'])

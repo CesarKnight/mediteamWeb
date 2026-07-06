@@ -4,10 +4,12 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\PermisoEnum;
 use App\Enums\UsuarioTipo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -79,5 +81,31 @@ class User extends Authenticatable implements PasskeyUser
     public function bitacoras(): HasMany
     {
         return $this->hasMany(Bitacora::class);
+    }
+
+    public function rol(): BelongsTo
+    {
+        return $this->belongsTo(Rol::class);
+    }
+
+    public function tienePermiso(PermisoEnum $permiso): bool
+    {
+        return $this->rol?->permisos()->where('nombre', $permiso->value)->exists() ?? false;
+    }
+
+    /**
+     * Keeps rol_id (the real FK) in sync with tipo whenever it changes, so
+     * tipo stays the single field callers set while the database still gets
+     * a proper users.rol_id -> roles.id relationship to query against.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if ($user->isDirty('tipo') || $user->rol_id === null) {
+                $tipoValue = $user->tipo instanceof UsuarioTipo ? $user->tipo->value : $user->tipo;
+
+                $user->rol_id = Rol::where('nombre', $tipoValue)->value('id');
+            }
+        });
     }
 }
