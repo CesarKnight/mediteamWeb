@@ -98,31 +98,28 @@ defineOptions({
                 />
                 <InputError :message="errors.telefono" />
             </div>
-
-
-            <div class="grid gap-2">
-                <Label for="tipo">Rol de usuario</Label>
-                <select
-                    id="tipo"
-                    name="tipo"
-                    :tabindex="6"
-                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    <option value="paciente">
-                        Paciente
-                    </option>
-                    <option value="medico">
-                        Medico
-                    </option>
-                    <option value="secretaria">
-                        Secretaria
-                    </option>
-                    <option value="administrador">
-                        Administrador
-                    </option>
-                </select>
-                <InputError :message="errors.tipo" />
-            </div>
+    
+            <select
+                id="tipo"
+                name="tipo"
+                :tabindex="6"
+                hidden
+                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            >
+                <option value="paciente" selected>
+                    Paciente
+                </option>
+                <option value="medico">
+                    Medico
+                </option>
+                <option value="secretaria">
+                    Secretaria
+                </option>
+                <option value="administrador">
+                    Administrador
+                </option>
+            </select>
+        
 
             <div class="grid gap-2">
                 <Label for="email">Correo Electronico</Label>

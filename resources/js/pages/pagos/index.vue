@@ -7,6 +7,9 @@ import {
 import PagoTable from '@/components/pago/pagoTable.vue';
 import { CircleDollarSign } from '@lucide/vue';
 import Button from '@/components/ui/button/Button.vue';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineOptions({
     layout: {
@@ -38,7 +41,7 @@ defineProps<{
                     {{ pagos.length }} pago{{ pagos.length !== 1 ? 's' : '' }} registrado{{ pagos.length !== 1 ? 's' : '' }}
                 </p>
             </div>
-            <Button as-child>
+            <Button v-if="puede('Pago.crear')" as-child>
                 <Link :href="createPago()">
                     <CircleDollarSign class="mr-2 h-4 w-4" />
                     Registrar pago

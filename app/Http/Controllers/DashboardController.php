@@ -2,19 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoEnum;
 use App\Models\Cita;
 use App\Models\Historia;
 use App\Models\Medico;
 use App\Models\Pago;
 use App\Models\Paciente;
 use App\Models\Servicio;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function index(): Response
+    /**
+     * Ordered fallback for users without Dashboard.ver: mirrors the
+     * sidebar's nav order, so a role that can't see the dashboard lands on
+     * the first resource it's actually allowed to see instead of a 403.
+     *
+     * @var list<array{0: PermisoEnum, 1: string}>
+     */
+    private const RUTA_POR_PERMISO = [
+        [PermisoEnum::UsuarioVer, 'Usuariosindex'],
+        [PermisoEnum::PacienteVer, 'Pacientesindex'],
+        [PermisoEnum::MedicoVer, 'Medicosindex'],
+        [PermisoEnum::SecretariaVer, 'Secretariasindex'],
+        [PermisoEnum::HistoriaVer, 'Historiasindex'],
+        [PermisoEnum::ServicioVer, 'Serviciosindex'],
+        [PermisoEnum::CitaVer, 'Citasindex'],
+        [PermisoEnum::PagoVer, 'Pagosindex'],
+        [PermisoEnum::ReporteVer, 'Reportesindex'],
+        [PermisoEnum::BitacoraVer, 'Bitacoraindex'],
+        [PermisoEnum::PermisoVer, 'Permisosindex'],
+    ];
+
+    public function index(Request $request): Response|RedirectResponse
     {
+        /** @var User $usuario */
+        $usuario = $request->user();
+
+        if (! $usuario->tienePermiso(PermisoEnum::DashboardVer)) {
+            return $this->redirigirAPrimeraRutaDisponible($usuario);
+        }
+
         return Inertia::render('dashboard', [
             'kpis'               => $this->kpis(),
             'citasHoy'           => $this->citasHoy(),
@@ -25,6 +57,17 @@ class DashboardController extends Controller
             'serviciosTop'       => $this->serviciosTop(),
             'pagosPendientes'    => $this->pagosPendientes(),
         ]);
+    }
+
+    private function redirigirAPrimeraRutaDisponible(User $usuario): Response|RedirectResponse
+    {
+        foreach (self::RUTA_POR_PERMISO as [$permiso, $ruta]) {
+            if ($usuario->tienePermiso($permiso)) {
+                return redirect()->route($ruta);
+            }
+        }
+
+        return Inertia::render('sin-acceso');
     }
 
     private function kpis(): array

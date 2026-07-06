@@ -29,6 +29,9 @@ import {
     edit as editUser,
     index as usuarioIndex
 } from '@/actions/App/Http/Controllers/UserController';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineOptions({
     layout: {
@@ -94,7 +97,7 @@ function executeDelete() {
                     {{ usuarios.length }} usuario{{ usuarios.length !== 1 ? 's' : '' }} registrado{{ usuarios.length !== 1 ? 's' : '' }}
                 </p>
             </div>
-            <Button as-child>
+            <Button v-if="puede('Usuario.crear')" as-child>
                 <Link :href="createUser()">
                     <UserPlus class="mr-2 h-4 w-4" />
                     Añadir usuario
@@ -140,13 +143,14 @@ function executeDelete() {
                             <TableCell class="text-muted-foreground">{{ user.email }}</TableCell>
                             <TableCell class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <Button variant="ghost" size="icon" as-child>
+                                    <Button v-if="puede('Usuario.editar')" variant="ghost" size="icon" as-child>
                                         <Link :href="editUser({ user: user.id })">
                                             <Pencil class="h-4 w-4 text-muted-foreground" />
                                             <span class="sr-only">Editar {{ user.name }}</span>
                                         </Link>
                                     </Button>
                                     <Button
+                                        v-if="puede('Usuario.eliminar')"
                                         variant="ghost"
                                         size="icon"
                                         class="hover:bg-destructive/10"

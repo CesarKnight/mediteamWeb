@@ -18,6 +18,9 @@ import {
     edit as editPaciente,
     destroy as destroyPaciente,
 } from '@/actions/App/Http/Controllers/PacienteController';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineProps<{
     pacientes: {
@@ -94,13 +97,13 @@ function executeDelete() {
                             </Link>
                         </Button>
 
-                        <Button variant="ghost" size="icon" as-child>
+                        <Button v-if="puede('Paciente.editar')" variant="ghost" size="icon" as-child>
                             <Link :href="editPaciente({ paciente: paciente.id })">
                             <Pencil class="h-4 w-4 text-muted-foreground" />
                             <span class="sr-only">Editar {{ paciente.name }}</span>
                             </Link>
                         </Button>
-                        <Button variant="ghost" size="icon" class="hover:bg-destructive/10"
+                        <Button v-if="puede('Paciente.eliminar')" variant="ghost" size="icon" class="hover:bg-destructive/10"
                             @click="confirmDelete(paciente)">
                             <Trash2 class="h-4 w-4 text-destructive" />
                             <span class="sr-only">Eliminar {{ paciente.name }}</span>

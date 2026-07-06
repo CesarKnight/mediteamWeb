@@ -23,6 +23,9 @@ import {
     index as permisosIndex,
     toggle as togglePermiso,
 } from '@/actions/App/Http/Controllers/PermisoController';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 type RolOption = {
     id: number;
@@ -153,6 +156,7 @@ function alternar(permiso: string, habilitado: boolean) {
                             >
                                 <Switch
                                     v-if="recurso.operaciones[operacion]"
+                                    :disabled="!puede('Permiso.editar')"
                                     :model-value="estaHabilitado(recurso.operaciones[operacion]!)"
                                     @update:model-value="(habilitado) => alternar(recurso.operaciones[operacion]!, habilitado)"
                                 />

@@ -7,6 +7,9 @@ import {
 import CitaAgenda from '@/components/cita/citaAgenda.vue';
 import { CalendarPlus } from '@lucide/vue';
 import Button from '@/components/ui/button/Button.vue';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineOptions({
     layout: {
@@ -38,7 +41,7 @@ defineProps<{
                     {{ citas.length }} cita{{ citas.length !== 1 ? 's' : '' }} registrada{{ citas.length !== 1 ? 's' : '' }}
                 </p>
             </div>
-            <Button as-child>
+            <Button v-if="puede('Cita.crear')" as-child>
                 <Link :href="createCita()">
                     <CalendarPlus class="mr-2 h-4 w-4" />
                     Agendar cita

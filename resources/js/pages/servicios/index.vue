@@ -7,6 +7,9 @@ import {
 import ServicioTable from '@/components/servicio/servicioTable.vue';
 import { PackagePlus } from '@lucide/vue';
 import Button from '@/components/ui/button/Button.vue';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineOptions({
     layout: {
@@ -37,7 +40,7 @@ defineProps<{
                     {{ servicios.length }} servicio{{ servicios.length !== 1 ? 's' : '' }} registrado{{ servicios.length !== 1 ? 's' : '' }}
                 </p>
             </div>
-            <Button as-child>
+            <Button v-if="puede('Servicio.crear')" as-child>
                 <Link :href="createServicio()">
                     <PackagePlus class="mr-2 h-4 w-4" />
                     Añadir Servicio

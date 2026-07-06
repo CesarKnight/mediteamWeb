@@ -12,6 +12,9 @@ import MedicoTable from '@/components/medico/medicoTable.vue';
 import Button from '@/components/ui/button/Button.vue';
 import { SquarePlus } from '@lucide/vue';
 import { create as createUser } from '@/actions/App/Http/Controllers/UserController';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineOptions({
     layout: {
@@ -66,7 +69,7 @@ function executeDelete() {
                 </p>
             </div>
 
-            <Button as-child>
+            <Button v-if="puede('Usuario.crear')" as-child>
                 <Link :href="createUser()">
                     <SquarePlus class="mr-2 h-4 w-4" />
                     Añadir Médico

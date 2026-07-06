@@ -20,6 +20,9 @@ import {
     destroy as destroyServicio,
 } from '@/actions/App/Http/Controllers/ServicioController';
 import ServicioCards from './servicioCards.vue';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineProps<{
     servicios: {
@@ -118,14 +121,14 @@ function executeDelete() {
                             </TableCell>
                             <TableCell class="text-right" @click.stop>
                                 <div class="flex justify-end gap-2">
-                                    <Button variant="ghost" size="icon" as-child
+                                    <Button v-if="puede('Servicio.editar')" variant="ghost" size="icon" as-child
                                          @click="() => router.visit(editServicio({ servicio: servicio.id }))">
                                         <a>
                                             <Pencil class="h-4 w-4 text-muted-foreground" />
                                             <span class="sr-only">Editar servicio {{ servicio.id }}</span>
                                         </a>
                                     </Button>
-                                    <Button variant="ghost" size="icon" class="hover:bg-destructive/10"
+                                    <Button v-if="puede('Servicio.eliminar')" variant="ghost" size="icon" class="hover:bg-destructive/10"
                                         @click="confirmDelete(servicio)">
                                         <Trash2 class="h-4 w-4 text-destructive" />
                                         <span class="sr-only">Eliminar servicio {{ servicio.id }}</span>

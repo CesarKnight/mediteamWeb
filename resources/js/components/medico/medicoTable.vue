@@ -18,6 +18,9 @@ import {
     edit as editMedico,
     destroy as destroyMedico,
 } from '@/actions/App/Http/Controllers/MedicoController';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineProps<{
     medicos: {
@@ -79,13 +82,13 @@ function executeDelete() {
                 <TableCell class="text-muted-foreground">{{ medico.user.email }}</TableCell>
                 <TableCell class="text-right" @click.stop>
                     <div class="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" as-child>
+                        <Button v-if="puede('Medico.editar')" variant="ghost" size="icon" as-child>
                             <Link :href="editMedico({ medico: medico.id })">
                                 <Pencil class="h-4 w-4 text-muted-foreground" />
                                 <span class="sr-only">Editar {{ medico.user.name }}</span>
                             </Link>
                         </Button>
-                        <Button variant="ghost" size="icon" class="hover:bg-destructive/10"
+                        <Button v-if="puede('Medico.eliminar')" variant="ghost" size="icon" class="hover:bg-destructive/10"
                             @click="confirmDelete(medico)">
                             <Trash2 class="h-4 w-4 text-destructive" />
                             <span class="sr-only">Eliminar {{ medico.user.name }}</span>

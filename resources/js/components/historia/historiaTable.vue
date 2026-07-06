@@ -21,6 +21,9 @@ import {
     destroy as destroyHistoria,
 } from '@/actions/App/Http/Controllers/HistoriaController';
 import HistoriaCards from './historiaCards.vue';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineProps<{
     historias: {
@@ -155,7 +158,7 @@ function executeDelete() {
                                             <span class="sr-only">Ver historia {{ historia.id }}</span>
                                         </a>
                                     </Button>
-                                    <Button variant="ghost" size="icon" class="hover:bg-destructive/10"
+                                    <Button v-if="puede('Historia.eliminar')" variant="ghost" size="icon" class="hover:bg-destructive/10"
                                         @click="confirmDelete(historia)">
                                         <Trash2 class="h-4 w-4 text-destructive" />
                                         <span class="sr-only">Eliminar historia {{ historia.id }}</span>

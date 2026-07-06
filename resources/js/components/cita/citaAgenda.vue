@@ -15,6 +15,9 @@ import {
     updateEstado as updateEstadoCita,
     destroy as destroyCita,
 } from '@/actions/App/Http/Controllers/CitaController';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 interface CitaItem {
     id: number;
@@ -199,19 +202,21 @@ function confirmPending() {
 
                     <!-- actions -->
                     <div class="flex flex-wrap gap-2 sm:justify-end">
-                        <Button v-if="cita.estado !== 'aprobado'" type="button" size="sm" variant="outline"
-                            @click="setEstado(cita, 'aprobado')">
-                            Aprobar
-                        </Button>
-                        <Button v-if="cita.estado !== 'pospuesto'" type="button" size="sm" variant="outline"
-                            @click="setEstado(cita, 'pospuesto')">
-                            Posponer
-                        </Button>
-                        <Button v-if="cita.estado !== 'cancelado'" type="button" size="sm" variant="outline"
-                            class="text-destructive hover:bg-destructive/10" @click="requestCancel(cita)">
-                            Cancelar
-                        </Button>
-                        <Button type="button" size="icon" variant="ghost" class="hover:bg-destructive/10"
+                        <template v-if="puede('Cita.editar')">
+                            <Button v-if="cita.estado !== 'aprobado'" type="button" size="sm" variant="outline"
+                                @click="setEstado(cita, 'aprobado')">
+                                Aprobar
+                            </Button>
+                            <Button v-if="cita.estado !== 'pospuesto'" type="button" size="sm" variant="outline"
+                                @click="setEstado(cita, 'pospuesto')">
+                                Posponer
+                            </Button>
+                            <Button v-if="cita.estado !== 'cancelado'" type="button" size="sm" variant="outline"
+                                class="text-destructive hover:bg-destructive/10" @click="requestCancel(cita)">
+                                Cancelar
+                            </Button>
+                        </template>
+                        <Button v-if="puede('Cita.eliminar')" type="button" size="icon" variant="ghost" class="hover:bg-destructive/10"
                             @click="requestDelete(cita)">
                             <Trash2 class="h-4 w-4 text-destructive" />
                             <span class="sr-only">Eliminar cita</span>

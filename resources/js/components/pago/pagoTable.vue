@@ -20,6 +20,9 @@ import {
     destroy as destroyPago,
 } from '@/actions/App/Http/Controllers/PagoController';
 import PagoCards from './pagoCards.vue';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineProps<{
     pagos: {
@@ -138,7 +141,7 @@ function executeDelete() {
                                             <span class="sr-only">Ver pago {{ pago.id }}</span>
                                         </a>
                                     </Button>
-                                    <Button variant="ghost" size="icon" class="hover:bg-destructive/10"
+                                    <Button v-if="puede('Pago.eliminar')" variant="ghost" size="icon" class="hover:bg-destructive/10"
                                         @click="confirmDelete(pago)">
                                         <Trash2 class="h-4 w-4 text-destructive" />
                                         <span class="sr-only">Eliminar pago {{ pago.id }}</span>

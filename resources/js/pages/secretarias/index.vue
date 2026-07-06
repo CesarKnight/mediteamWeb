@@ -21,6 +21,9 @@ import {
     destroy as destroySecretaria,
 } from '@/actions/App/Http/Controllers/SecretariaController';
 import { create as createUser } from '@/actions/App/Http/Controllers/UserController';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineOptions({
     layout: {
@@ -75,7 +78,7 @@ function executeDelete() {
                 </p>
             </div>
 
-            <Button as-child>
+            <Button v-if="puede('Usuario.crear')" as-child>
                 <Link :href="createUser()">
                     <SquarePlus class="mr-2 h-4 w-4" />
                     Añadir Secretaria
@@ -112,13 +115,14 @@ function executeDelete() {
                             <TableCell class="text-muted-foreground">{{ secretaria.user.email }}</TableCell>
                             <TableCell class="text-right" @click.stop>
                                 <div class="flex justify-end gap-2">
-                                    <Button variant="ghost" size="icon" as-child>
+                                    <Button v-if="puede('Secretaria.editar')" variant="ghost" size="icon" as-child>
                                         <Link :href="editSecretaria({ secretaria: secretaria.id })">
                                             <Pencil class="h-4 w-4 text-muted-foreground" />
                                             <span class="sr-only">Editar {{ secretaria.user.name }}</span>
                                         </Link>
                                     </Button>
                                     <Button
+                                        v-if="puede('Secretaria.eliminar')"
                                         variant="ghost"
                                         size="icon"
                                         class="hover:bg-destructive/10"

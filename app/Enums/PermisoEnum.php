@@ -46,4 +46,7 @@ enum PermisoEnum: string
     case ReporteVer = 'Reporte.ver';
 
     case BitacoraVer = 'Bitacora.ver';
+
+    case PermisoVer = 'Permiso.ver';
+    case PermisoEditar = 'Permiso.editar';
 }

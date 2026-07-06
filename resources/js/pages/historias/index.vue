@@ -7,6 +7,9 @@ import {
 import HistoriaTable from '@/components/historia/historiaTable.vue';
 import { ClipboardPlus} from '@lucide/vue';
 import Button from '@/components/ui/button/Button.vue';
+import { usePermisos } from '@/composables/usePermisos';
+
+const { puede } = usePermisos();
 
 defineOptions({
     layout: {
@@ -50,7 +53,7 @@ defineProps<{
                     {{ historias.length }} historia{{ historias.length !== 1 ? 's' : '' }} registrada{{ historias.length !== 1 ? 's' : '' }}
                 </p>
             </div>
-            <Button as-child>
+            <Button v-if="puede('Historia.crear')" as-child>
                 <Link :href="createHistoria()">
                     <ClipboardPlus class="mr-2 h-4 w-4" />
                     Añadir Historia
